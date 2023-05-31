@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/app.css">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<!-- <body class="{% block body_class %}{% endblock %}" id="{% block body_id %}{% endblock %}"> -->
+    <!-- check to see if you can pass a style through the blocks -->
+    <nav class="navbar navbar-expand">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a href="/" class="navbar-brand">
+            <img id="nav-image" src="https://www.clipartmax.com/png/small/94-943102_red-meeple-meeple-3d.png" alt="Red Meeple - Meeple 3d @clipartmax.com">
+            <span>Board Game Mania</span>
+          </a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          {% if request.endpoint != None %}
+          <li>
+            <form class="navbar-form navbar-right" action="/games">
+              <input name="q" class="form-control" placeholder="Search Board Game " id="search">
+              <button class="btn btn-default">
+                <span class="fa fa-search"></span>
+              </button>
+            </form>
+          </li>
+          {% endif %}
+          {% if not g.user %}
+          <li><a href="/register">Register</a></li>
+          <li><a href="/login">Log in</a></li>
+          {% else %}
+          <li>
+            <a href="/users/{{ g.user.id }}">
+              <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}">
+            </a>
+          </li>
+          <li><a href="/my_games">My Games</a></li>
+          <li><a href="/logout">Log out</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      {% for category, message in get_flashed_messages(with_categories=True) %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+
+{% block content %} {% endblock %}
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js" integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script
+src="https://code.jquery.com/jquery-3.4.1.min.js"
+integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+crossorigin="anonymous"></script>
+<script src="static/board_game_mania.js"></script> -->
+<!-- </body> -->
+</html>

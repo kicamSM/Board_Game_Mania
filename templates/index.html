@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+
+{% block content %}
+
+<body style="background-image: url({{game_images_b}});">
+    <main id="content">
+        <div>
+            <div class="container">
+                <div class="card p-4" id="home-card">
+                <div class="container mt-4 mb-4 p-3 d-flex justify-content-center mx-auto"> 
+                    <h1>Welcome to board game mania!</h1>
+                    <h2 class="display-6 text-center"></h2>
+                </div>
+                <div class="input-group body-container justify-content-center border rounded border-dark border-2 .bg-light">
+                    <a href="/games" class="button btn btn1 btn-success">Explore</a>
+                </div>
+                </div>
+            </div>
+        </div>
+    </main> 
+</body>
+{% endblock %}

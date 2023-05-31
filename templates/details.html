@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Users Page{% endblock %}
+
+{% block content %}
+<body>
+    <main id="content">
+        <h1 class="join-message text-center">Welcome to your page {{ user.first_name }}</h1>
+        <div div class="container mt-4 mb-4 p-3 d-flex justify-content-center mx-auto"> 
+            <div class="card p-4">
+            <h2>Your Information</h2>
+            <ul>
+                <li class="info">First Name: {{user.first_name}}</li>
+                <li class="info">Last Name: {{user.last_name}}</li>
+                <li class="info">Email: {{user.email}}</li>
+                <li class="info">Username: {{user.username}}</li>
+                <li class="info">Password: ***********</li>
+            </ul>
+            <a href="/users/{{user.id}}/edit" class="button btn1 btn btn-danger">Edit</a>
+        </div>
+    </main> 
+</body>
+
+
+{% endblock %}

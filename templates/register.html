@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Registration{% endblock %}
+
+
+{% block content %}
+<body id="home-container" style="background-image: url({{game_images}});">
+    <main id="content">
+        <div class="container">
+            <div class="heading-container">
+                <h1>This is the registration page.</h1>
+                <h2 class="display-6 text-center">For the full experience please register for Board Game Mania</h2>
+            </div>
+            <div class="input-group justify-content-center border rounded border-dark border-2 .bg-light">
+                {{ form.hidden_tag() }}
+                <form method="POST" id="registration-form">
+                    {{form.csrf_token}}
+
+                    {% for field in form if field.widget.input_type != 'hidden' %}
+                    {% for error in field.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                    {% endfor %}
+                    <p>
+                        {{field.label}}
+                        {{field(class="form-control")}}
+                    </p>
+                    {% endfor %}
+                    <button class="button btn-success">Submit</button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+</body>
+{% endblock %}
