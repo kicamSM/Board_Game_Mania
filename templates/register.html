@@ -11,7 +11,8 @@
                 <h1>This is the registration page.</h1>
                 <h2 class="display-6 text-center">For the full experience please register for Board Game Mania</h2>
             </div>
-            <div class="input-group justify-content-center border rounded border-dark border-2 .bg-light">
+            <div class="row justify-content-md-center form-card">
+            <div class="col-md-7 col-lg-5 card p-4">
                 {{ form.hidden_tag() }}
                 <form method="POST" id="registration-form">
                     {{form.csrf_token}}
@@ -21,14 +22,13 @@
                     <span class="text-danger">{{ error }}</span>
                     {% endfor %}
                     <p>
-                        {{field.label}}
-                        {{field(class="form-control")}}
+                        {{ field(placeholder=field.label.text, class="form-control") }}
                     </p>
                     {% endfor %}
                     <button class="button btn-success">Submit</button>
                 </form>
             </div>
-
+        </div>
         </div>
     </main>
 </body>

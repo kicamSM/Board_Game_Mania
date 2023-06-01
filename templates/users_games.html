@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}User's Games{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+
+{% block content %}
+
+<body>
+    <main id="content">
+        <div>
+            <div class="container">
+                <div class="heading-container" id="home-heading-container">
+                    <h1>{{user.first_name}}'s Games</h1>
+                </div>
+                <div>
+                    <ul class="text-center" id="games-list"> {{ games }}
+                    </ul>
+                </div>
+                </div>
+            </div>
+        </div>
+    </main> 
+</body>
+{% endblock %}

@@ -21,15 +21,16 @@
         <ul class="nav navbar-nav navbar-right">
           {% if request.endpoint != None %}
           <li>
-            <form class="navbar-form navbar-right" action="/games">
-              <input name="q" class="form-control" placeholder="Search Board Game " id="search">
-              <button class="btn btn-default">
-                <span class="fa fa-search"></span>
+            <form class="navbar-form navbar-right" action="/games/search">
+              <input name="q" class="form-control" placeholder="Search Board Game" id="search">
+              <button class="btn btn-default" id="search-btn">
+                <span class="fa fa-search">&#128269</span>
               </button>
             </form>
           </li>
           {% endif %}
           {% if not g.user %}
+          <li><a href="/games">Explore</a></li>
           <li><a href="/register">Register</a></li>
           <li><a href="/login">Log in</a></li>
           {% else %}
@@ -38,7 +39,8 @@
               <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}">
             </a>
           </li>
-          <li><a href="/my_games">My Games</a></li>
+          <li><a href="/games">Explore</a></li>
+          <li><a href="/users/games">My Games</a></li>
           <li><a href="/logout">Log out</a></li>
           {% endif %}
         </ul>

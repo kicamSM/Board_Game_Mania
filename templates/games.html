@@ -39,3 +39,53 @@ crossorigin="anonymous"></script>
 <script src="static/board_game_mania.js"></script>
 </body>
 {% endblock %}
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Board Games</title>
+  <style>
+    .card {
+      width: 300px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+    }
+    .card img {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-list"></div>
+
+  <script>
+    // Fetch data from the /api/games endpoint
+    fetch('/api/games')
+      .then(response => response.json())
+      .then(data => {
+        const gameList = document.getElementById('game-list');
+        const games = data.games;
+
+        games.forEach(game => {
+          const card = document.createElement('div');
+          card.classList.add('card');
+
+          const image = document.createElement('img');
+          image.src = game.thumb_url;
+          card.appendChild(image);
+
+          const name = document.createElement('h3');
+          name.textContent = game.name;
+          card.appendChild(name);
+
+          const description = document.createElement('p');
+          description.textContent = game.description_preview;
+          card.appendChild(description);
+
+          gameList.appendChild(card);
+        });
+      });
+  </script>
+</body>
+</html> -->

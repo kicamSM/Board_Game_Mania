@@ -6,7 +6,7 @@
 <body>
     <main id="content">
         <h1 class="join-message text-center">Welcome to your page {{ user.first_name }}</h1>
-        <div div class="container mt-4 mb-4 p-3 d-flex justify-content-center mx-auto"> 
+        <div div class="container mt-4 mb-4 p-3 d-flex justify-content-center"> 
             <div class="card p-4">
             <h2>Your Information</h2>
             <ul>
@@ -16,7 +16,8 @@
                 <li class="info">Username: {{user.username}}</li>
                 <li class="info">Password: ***********</li>
             </ul>
-            <a href="/users/{{user.id}}/edit" class="button btn1 btn btn-danger">Edit</a>
+            <a href="/users/{{user.id}}/edit" class="button btn1 btn btn-info">Edit</a>
+            <a href="/users/delete" class="button btn1 btn btn-danger">Delete</a>
         </div>
     </main> 
 </body>

@@ -9,6 +9,7 @@ body {
 
 #home-card {
   justify-content: center;
+  
 }
 
 
@@ -18,6 +19,22 @@ body {
     mix-blend-mode: multiply;
     /* background: transparent; */
   }
+
+  #search-btn {
+    height: 24px;
+    width: 40px;
+    color: black;
+    font-weight: 400;
+    background-color: white;
+    margin-top: 1px;
+    border-radius: 10px;
+
+  }
+
+  /* #search-btn:hover {
+    background-color: rgb(81, 133, 3);
+    color: black;
+  } */
 
   .heading {
     color: #d9d6d6;
@@ -180,12 +197,24 @@ body {
     transition: all 0.5s;
 }
 
+#home-card {
+  margin: 0 auto;
+  float: none;
+  margin-top: 110px;
+  border: 3px solid;
+  border-color:#6e6b6b;
+}
+
 /* .image img {
     transition: all 0.5s
 } */
 
 /* .card:hover .image img {
     transform: scale(1.5)
+} */
+
+/* .form-card {
+  background-color: #6e6b6b;
 } */
 
 .btn {
@@ -249,3 +278,22 @@ hr .new1 {
     font-weight: bold
 } */
 
+.game-images {
+  height: 300px;
+  width: 230px;
+}
+
+#game-paragraph {
+  border: 1px solid;
+  border-color: gray;
+  margin: 3px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+#game-ul {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  padding: 5px;
+}

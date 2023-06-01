@@ -124,8 +124,9 @@ def login_user():
         user = User.authenticate(username, password)
         if user:
             flash(f"Welcome Back, {user.username}!", "primary")
+            do_login(user)
             session['user_id'] = user.id
-            return redirect('/tweets')
+            return redirect('/')
         else:
             form.username.errors = ['Invalid username/password.']
 
@@ -137,6 +138,22 @@ def logout():
     do_logout()
     flash("You have been logged out!", 'success')
     return redirect('/login')
+
+
+@app.route('/users/delete', methods=["POST"])
+def delete_user():
+    """Delete user."""
+    
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    do_logout()
+
+    db.session.delete(g.user)
+    db.session.commit()
+
+    return redirect("/register")
 
 @app.route('/users/<int:user_id>', methods=['GET', 'POST'])
 def display_user(user_id): 
@@ -176,11 +193,31 @@ def edit_user(user_id):
 
     return render_template('edit.html', user=user, form=form)
 
-@app.route('/games', methods=['GET'])
-def display_game():
-    """Display Game"""
-    response = requests.get(f'{API_BASE_URL}/search?limit=30&client_id={client_id}')
+# @app.route('/games/search', methods=['GET'])
+# def display_searched_games():
     
+#     response = requests.get(f'{API_BASE_URL}/search?limit=30&client_id={client_id}')
+#     games = response.json()
+
+@app.route('/users/games', methods=['GET'])
+def display_users_games():
+    """Display User's Games"""
+    user = g.user
+    # raise ValueError(user)
+    return render_template('users_games.html', user=user)
+
+@app.route('/users/games/add', methods=['GET', 'POST'])
+def add_game_to_user(): 
+    """Adds Game to My Games"""
+    
+    
+    return('Hello')
+        
+
+@app.route('/api/games', methods=['GET'])
+def api_games():
+    """Display Game"""
+    response = requests.get(f'{API_BASE_URL}/search?limit=100&client_id={client_id}')
     games = response.json()
     
     # games = { 
@@ -194,7 +231,7 @@ def display_game():
     # games = [response.serialize() for game in games_data]
     # note that this is retrieving the games from the table and we dont have any games in there so you need to figure out how to retrieve the games from the API 
     # return render_template('games.html', games=games)
-    return jsonify(games)
+    return games 
 # so this is actually giving us the data that we want to use, I dont think you need what you have in models.py
     
     # ***********************************************************
@@ -216,72 +253,29 @@ def display_game():
 
     # ************************************************************************
     
-    
-    # use game object instead of images
-    # games = requests.get(f'{API_BASE_URL}/game/images?limit=100&client_id={client_id}')
-        
-    # games_data = games.json()
-    # raise ValueError(games_data)
-    
-    # raise ValueError(games_data)
-
-    # games_id = [game_id["id"] for game_id in games_data["images"]]
-    
-    # raise ValueError(games_id)
-
-    # raise ValueError(games_data['images'][1])
-    # returns single games_data at index of one
-
-    # for result in games_data['images']:
-    #     game_images = result['medium']
-    # game_images = [game_image["medium"] for game_image in games_data["images"]]
-    
-        # return game_images
-    # raise ValueError(game_images)
-        # raise ValueError(games_data['images'])
-        # raise ValueError(result['medium'])
-        # raise ValueError(game_images)
-        
-        # for game_image in game_images:
-        #     return game_image
-        
-        # You can absolutely build a list of dictionaries to do that:
-# game_images = [{"img": result["medium"], "id": result["id"]} for result in games_data["images"]]
-    
-    # if not search: 
-    #     games = Game.query.all()
-    # else:
-           
-    # games_data = games.json()
-    # raise ValueError(data)
-    
-    # games_data = g_data['games']
-    
-  
-    
-    # game_images = [game_image["medium"] for game_image in games_data["images"]]
-    # games_id = [game_id["id"] for game_id in games_data["images"]]
-    
-    # names = [game_data[0] for game_data in games_data['name']]
-    
-    # names = game_data[0]['name']
-    
-  
-    # all_min_players = game_data[1]['min_players']
-    # all_max_players = game_data[1]['max_players']
-    # images = game_data[1]['images']['medium']
-    # descriptions = game_data[1]['description']
-    # raise ValueError(image)
-    
-    
-    # raise ValueError(game_data[1]['description'])  
-
-    
-    # raise ValueError(game_data)
-    # so my assumption is that we are going to want t write this in json so that I can use react and pass in lists and access them all etc...
-    
     # ****************************************************************
     # THIS IS WHAT WAS DISPLAYING BEFORE 
     # return render_template('games.html', images=images, names=names, all_min_players=all_min_players, all_max_players=all_max_players, descriptions=descriptions)
 
     # *****************************************************************
+
+@app.route('/games', methods=['GET'])
+def display_game():
+    """Display Games"""
+    
+    return render_template('games.html')
+
+@app.route('/games/<game_id>', methods=['GET'])
+def display_game_details(game_id): 
+    """Game Details"""
+
+    return render_template('game_details.html', game_id=game_id)
+
+@app.route('/api/games/<game_id>', methods=['GET'])
+def api_game(game_id): 
+    """Game Details"""
+    response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
+
+    game = response.json()
+
+    return game
