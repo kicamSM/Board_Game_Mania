@@ -59,75 +59,78 @@ class User(db.Model):
 
         return False
     
-class Creator(db.Model):
-    """Creators Model"""
-    __tablename__ = 'creators'
+# class Creator(db.Model):
+#     """Creators Model"""
+#     __tablename__ = 'creators'
     
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name= db.Column(db.String)
-    
-      
-    def __repr__(self):
-        return f"<Department {self.id} {self.name}>"
-    
-class Genre(db.Model):
-    """Genres Model"""
-    __tablename__ = 'genres'
-    
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    genre= db.Column(db.String)
-    
-    def __repr__(self):
-        return f"<Genre {self.id} {self.genre}>"
-    
-class Publisher(db.Model):
-    """Publisher Model"""
-    __tablename__ = 'publishers'
-    
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String)
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name= db.Column(db.String)
     
       
-    def __repr__(self):
-        return f"<Publisher {self.id} {self.genre}>"
+#     def __repr__(self):
+#         return f"<Department {self.id} {self.name}>"
     
-class Language(db.Model):
-    """Languages Model"""
-    __tablename__ = 'languages'
+# class Genre(db.Model):
+#     """Genres Model"""
+#     __tablename__ = 'genres'
     
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    language = db.Column(db.String)
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     genre= db.Column(db.String)
+    
+#     def __repr__(self):
+#         return f"<Genre {self.id} {self.genre}>"
+    
+# class Publisher(db.Model):
+#     """Publisher Model"""
+#     __tablename__ = 'publishers'
+    
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String)
     
       
-    def __repr__(self):
-        return f"<Language {self.id} {self.language}>"
+#     def __repr__(self):
+#         return f"<Publisher {self.id} {self.genre}>"
+    
+# class Language(db.Model):
+#     """Languages Model"""
+#     __tablename__ = 'languages'
+    
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     language = db.Column(db.String)
+    
+      
+    # def __repr__(self):
+    #     return f"<Language {self.id} {self.language}>"
     
 class Game(db.Model):
     """Game Model"""
     __tablename__ = 'games'
     
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-    play_duration = db.Column(db.String, nullable=False)
-    creator_id = db.Column(db.Integer, db.ForeignKey('creators.id'))
-    min_players = db.Column(db.Integer, nullable=False)
-    max_players = db.Column(db.Integer, nullable=False)
-    publisher_id = db.Column(db.Integer, db.ForeignKey('publishers.id'))
+    id = db.Column(db.String, primary_key=True)
+    # name = db.Column(db.String, nullable=False)
+    # play_duration = db.Column(db.String, nullable=False)
+    # creator_id = db.Column(db.Integer, db.ForeignKey('creators.id'))
+    # min_players = db.Column(db.Integer, nullable=False)
+    # max_players = db.Column(db.Integer, nullable=False)
+    # publisher_id = db.Column(db.Integer, db.ForeignKey('publishers.id'))
     
       
-    def serialize(self): 
-        return {
-            'id': self.id,
-            'name': self.name,
-            'play_duration': self.play_duration,
-            'creator_id': self.creator_id,
-            'min_players': self.min_players,
-            'max_players': self.max_players,
-            'publisher_id': self.publisher_id
-        }
-    
+    # def serialize(self): 
+    #     return {
+    #         'id': self.id,
+    #         'name': self.name,
+    #         'play_duration': self.play_duration,
+    #         'creator_id': self.creator_id,
+    #         'min_players': self.min_players,
+    #         'max_players': self.max_players,
+    #         'publisher_id': self.publisher_id
+    #     }
+ 
     def __repr__(self):
-        return f"<Game {self.user_id} name={self.name} play_duration={self.play_duration} creator_id={self.creator_id} min_players={self.min_players} max_players={self.max_players} publisher_id={self.publisher_id}>"
+        return f"<Game {self.user_id}>"
+    
+    # def __repr__(self):
+    #     return f"<Game {self.user_id} name={self.name} play_duration={self.play_duration} creator_id={self.creator_id} min_players={self.min_players} max_players={self.max_players} publisher_id={self.publisher_id}>"
     
     
 class Player(db.Model):
@@ -151,33 +154,33 @@ class Match(db.Model):
     __tablename__ = 'matches'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id'))
+    game_id = db.Column(db.String, db.ForeignKey('games.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
       
     def __repr__(self):
         return f"<Match {self.id} {self.game_id} {self.user_id}>"
      
-class GameGenre(db.Model):
-    """Games Genres Model"""
-    __tablename__ = 'games_genres'
+# class GameGenre(db.Model):
+#     """Games Genres Model"""
+#     __tablename__ = 'games_genres'
     
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), primary_key=True)
-    genre_id = db.Column(db.Integer, db.ForeignKey('genres.id'), primary_key=True)
+#     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), primary_key=True)
+#     genre_id = db.Column(db.Integer, db.ForeignKey('genres.id'), primary_key=True)
     
       
-    def __repr__(self):
-        return f"<Department {self.dept_code} {self.dept_name} {self.phone}>"
+#     def __repr__(self):
+#         return f"<Department {self.dept_code} {self.dept_name} {self.phone}>"
 
-class GameLanguage(db.Model):
-    """Games Languages Model"""
-    __tablename__ = 'games_languages'
+# class GameLanguage(db.Model):
+#     """Games Languages Model"""
+#     __tablename__ = 'games_languages'
     
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), primary_key=True)
-    language_id = db.Column(db.Integer, db.ForeignKey('languages.id'), primary_key=True)
+#     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), primary_key=True)
+#     language_id = db.Column(db.Integer, db.ForeignKey('languages.id'), primary_key=True)
     
       
-    def __repr__(self):
-        return f"<GameLanguage {self.game_id} {self.language_id}>"
+#     def __repr__(self):
+#         return f"<GameLanguage {self.game_id} {self.language_id}>"
     
 class MatchPLayer(db.Model):
     """Match Player Model"""

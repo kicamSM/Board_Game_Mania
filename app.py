@@ -3,7 +3,8 @@
 import warnings
 from flask import Flask, render_template, request, jsonify, flash, session, redirect, g
 import requests
-from models import db, connect_db, User, Creator, Genre, Publisher, Language, Game, Player, Match
+from models import db, connect_db, User, Game, Player, Match 
+# , Creator, Genre, Publisher, Language
 from forms import RegistrationForm, LoginForm, UserEditForm
 from sqlalchemy.exc import IntegrityError
 
@@ -160,7 +161,6 @@ def display_user(user_id):
     user = User.query.get_or_404(user_id)
     # games = user.games 
     
-    
     return render_template('details.html', user=user) 
 
 @app.route('/users/<int:user_id>/edit', methods=['GET','POST'])
@@ -206,9 +206,16 @@ def display_users_games():
     # raise ValueError(user)
     return render_template('users_games.html', user=user)
 
-@app.route('/users/games/add', methods=['GET', 'POST'])
-def add_game_to_user(): 
+@app.route('/games/<game_id>/add', methods=['GET', 'POST'])
+def add_game_to_user(game_id): 
     """Adds Game to My Games"""
+    
+    newGame = Game(id=game_id) 
+    # raise ValueError(newGame)
+    db.session.add(newGame)
+    db.session.commit()
+    
+    # note that here you will probably need to change your models so that you are only storing a game id in the games model which is actually going to turn out to be the users/games I believe 
     
     
     return('Hello')
