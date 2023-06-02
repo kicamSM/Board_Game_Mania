@@ -36,7 +36,8 @@ except ImportError:
     warnings.warn('Debugging disabled. Install flask_debugtoolbar to enable')
     pass
 
-db.init_app(app)
+# db.init_app(app)
+# this was not letting the flask app run 
 # adds the app on the database after the fact
 # entered this from the youtube file 
 
@@ -215,9 +216,11 @@ def display_users_games():
     
     # raise ValueError(Game.id)
     game_id = Game.query.first()
+    
+    game_id_str = str(game_id)
     # game = getattr(game_id, 'id')
     game = GameClass(game_id)
-    raise ValueError(game)
+    raise ValueError(game_id_str)
     raise ValueError(help(game_id))
 
 
