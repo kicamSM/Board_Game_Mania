@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, jsonify, flash, session, redi
 import requests
 from models import db, connect_db, User, Game, Player, Match 
 # , Creator, Genre, Publisher, Language
+from board_game_mania import GameClass 
 from forms import RegistrationForm, LoginForm, UserEditForm
 from sqlalchemy.exc import IntegrityError
 
@@ -34,6 +35,10 @@ try:
 except ImportError:
     warnings.warn('Debugging disabled. Install flask_debugtoolbar to enable')
     pass
+
+db.init_app(app)
+# adds the app on the database after the fact
+# entered this from the youtube file 
 
 connect_db(app)
 
@@ -203,27 +208,80 @@ def edit_user(user_id):
 def display_users_games():
     """Display User's Games"""
     user = g.user
+    
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
+    
+    # raise ValueError(Game.id)
+    game_id = Game.query.first()
+    # game = getattr(game_id, 'id')
+    game = GameClass(game_id)
+    raise ValueError(game)
+    raise ValueError(help(game_id))
+
+
+    # raise ValueError(game_id)
+    # THIS IS RETURNING AN OBJECT NOT JUST THE ID SO YOU NEED TO GET THE OBJECT OUT OF THE ID
+    raise ValueError(type(game_id))
+    raise ValueError(getattr('game_id', Game))
+     
+    response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
+    game = response.json()
+    raise ValueError(game)
+    # this is returning a game os it works.... 
+    # game_ids = Game.query.all()
+    # this seems to be returning a list of objects so check for this. 
+    # raise ValueError(game_ids)
+    
+    for game_id in game_ids:
+        # raise ValueError(game_id)
+        raise TypeError(game_id)
+        response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
+        raise ValueError(response)
+        game = response.json()
+        raise ValueError(game)
+    # this is not returning a list so we need to iterate through the ids and return them individually 
+    raise ValueError(game_ids) 
+    
+    response = requests.get(f'{API_BASE_URL}/search?ids={games_ids}&client_id={client_id}')
+    
+    # raise ValueError(response)
+
+    games = response.json()
+    # no games currently listed 
+    
+    raise ValueError(games)
+    
+    
     # raise ValueError(user)
-    return render_template('users_games.html', user=user)
+    return render_template('users_games.html', user=user, games=games)
 
 @app.route('/games/<game_id>/add', methods=['GET', 'POST'])
 def add_game_to_user(game_id): 
     """Adds Game to My Games"""
+    # user = g.user
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
     
     newGame = Game(id=game_id) 
     # raise ValueError(newGame)
     db.session.add(newGame)
     db.session.commit()
     
+    # this is returning the ids for the games
+    
+    # you are going to have to handle a duplicate key error.
+    
     # note that here you will probably need to change your models so that you are only storing a game id in the games model which is actually going to turn out to be the users/games I believe 
     
-    
-    return('Hello')
+    return redirect('/games')
         
 
 @app.route('/api/games', methods=['GET'])
 def api_games():
-    """Display Game"""
+    """API Get Games"""
     response = requests.get(f'{API_BASE_URL}/search?limit=100&client_id={client_id}')
     games = response.json()
     
@@ -274,15 +332,20 @@ def display_game():
 
 @app.route('/games/<game_id>', methods=['GET'])
 def display_game_details(game_id): 
-    """Game Details"""
+    """Display Game Details"""
 
     return render_template('game_details.html', game_id=game_id)
 
 @app.route('/api/games/<game_id>', methods=['GET'])
 def api_game(game_id): 
-    """Game Details"""
+    """API Get Game"""
     response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
 
     game = response.json()
 
     return game
+
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+# from the youtube video 

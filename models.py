@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 from sqlalchemy.orm import relationship, backref
 
+
+
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
@@ -125,9 +127,18 @@ class Game(db.Model):
     #         'max_players': self.max_players,
     #         'publisher_id': self.publisher_id
     #     }
+    
+    # def __new__(cls, *args, **kwargs):
+    #     print("1. Create a new instance of Point.")
+    #     return super().__new__(cls)
+    
+    #constructor 
+    # def __init__(self, id):
+    #     self.id = id
  
     def __repr__(self):
-        return f"<Game {self.user_id}>"
+        return f"<Game {self.id}>"
+    
     
     # def __repr__(self):
     #     return f"<Game {self.user_id} name={self.name} play_duration={self.play_duration} creator_id={self.creator_id} min_players={self.min_players} max_players={self.max_players} publisher_id={self.publisher_id}>"

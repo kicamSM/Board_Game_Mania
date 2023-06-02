@@ -1,4 +1,12 @@
-import requests
+"""Utilities related to Board Game Mania"""
+
+class GameClass: 
+    def __init__(self, id):
+        self.id = id
+        
+        
+        
+# import requests
 
 # term = "Madonna"
 # response.text
@@ -74,12 +82,12 @@ client_id = "3Ya324qQb2"
     
     # print(game_images)
         
-games = requests.get(f'{API_BASE_URL}/search?name=Catan&client_id={client_id}')
+# games = requests.get(f'{API_BASE_URL}/search?name=Catan&client_id={client_id}')
 
 
-games_data = games.json()
+# games_data = games.json()
 
-print(games_data)
+# print(games_data)
 
 
             #  <!-- {% for i in range(0, len) %}
