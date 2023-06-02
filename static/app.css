@@ -297,3 +297,7 @@ hr .new1 {
   -moz-columns: 2;
   padding: 5px;
 }
+
+.h1background {
+  color: rgba(128, 128, 128, 0.802);
+} 

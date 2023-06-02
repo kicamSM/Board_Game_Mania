@@ -32,15 +32,6 @@ async function displayGames() {
     // console.log(API_BASE_URL)
     const response = await axios.get(`${API_BASE_URL}api/games/${game_id}`);
     // this we are pulling from the route in the API for games 
-    console.log('response:', response)
-    console.log(response.status);
-    console.log('response.data:', response.data)
-    console.log('response.data.games:', response.data.games)
-    // const object = JSON.parse(response)
-    // console.log('object:', object)
-    // console.log(response)
-
-    // console.log(response.data)
 
     let gameData = response.data.games[0]
     console.log('gameData:', gameData)
@@ -50,4 +41,3 @@ async function displayGames() {
 
 }
 $(displayGames);
-// displayGames()

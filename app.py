@@ -2,10 +2,10 @@
 
 import warnings
 from flask import Flask, render_template, request, jsonify, flash, session, redirect, g
-import requests
-from models import db, connect_db, User, Game, Player, Match 
+from models import db, connect_db, User, Game, Player, Match
 # , Creator, Genre, Publisher, Language
-from board_game_mania import GameClass 
+# from board_game_mania import GameClass 
+import requests
 from forms import RegistrationForm, LoginForm, UserEditForm
 from sqlalchemy.exc import IntegrityError
 
@@ -205,60 +205,40 @@ def edit_user(user_id):
 #     response = requests.get(f'{API_BASE_URL}/search?limit=30&client_id={client_id}')
 #     games = response.json()
 
-@app.route('/users/games', methods=['GET'])
-def display_users_games():
-    """Display User's Games"""
-    user = g.user
-    
+@app.route('/api/users/games', methods=['GET'])
+def api_users_games():
+    """API get User's Games"""
+    # user = g.user
     if not g.user:
         flash("Please make an account to use this feature.", "danger")
         return redirect("/")
     
-    # raise ValueError(Game.id)
-    game_id = Game.query.first()
+    list_of_games = Game.query.all()
+    id_list = []
     
-    game_id_str = str(game_id)
-    # game = getattr(game_id, 'id')
-    game = GameClass(game_id)
-    raise ValueError(game_id_str)
-    raise ValueError(help(game_id))
-
-
-    # raise ValueError(game_id)
-    # THIS IS RETURNING AN OBJECT NOT JUST THE ID SO YOU NEED TO GET THE OBJECT OUT OF THE ID
-    raise ValueError(type(game_id))
-    raise ValueError(getattr('game_id', Game))
-     
-    response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
-    game = response.json()
-    raise ValueError(game)
-    # this is returning a game os it works.... 
-    # game_ids = Game.query.all()
-    # this seems to be returning a list of objects so check for this. 
-    # raise ValueError(game_ids)
+    for game in list_of_games: 
+        game_dict = game.__dict__
+        game_id = game_dict['id']
+        id_list.append(game_dict['id'])
     
-    for game_id in game_ids:
-        # raise ValueError(game_id)
-        raise TypeError(game_id)
-        response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
-        raise ValueError(response)
-        game = response.json()
-        raise ValueError(game)
-    # this is not returning a list so we need to iterate through the ids and return them individually 
-    raise ValueError(game_ids) 
-    
-    response = requests.get(f'{API_BASE_URL}/search?ids={games_ids}&client_id={client_id}')
-    
+    string_ids = ','.join(id_list)
+    # raise ValueError(string_ids)
+    response = requests.get(f'{API_BASE_URL}/search?ids={string_ids}&client_id={client_id}')
     # raise ValueError(response)
-
     games = response.json()
-    # no games currently listed 
+    # raise ValueError(games)
+    return games 
+
+@app.route('/users/games', methods=['GET'])
+def display_users_games():
+    """Display User's Games"""
+    user = g.user
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
     
-    raise ValueError(games)
+    return render_template('users_games.html', user=user)
     
-    
-    # raise ValueError(user)
-    return render_template('users_games.html', user=user, games=games)
 
 @app.route('/games/<game_id>/add', methods=['GET', 'POST'])
 def add_game_to_user(game_id): 
@@ -287,11 +267,9 @@ def api_games():
     """API Get Games"""
     response = requests.get(f'{API_BASE_URL}/search?limit=100&client_id={client_id}')
     games = response.json()
-    
+    # raise ValueError(games)
     # games = { 
-    
     # "names": "[game_name['name'] for game_name in g_data['games']]"
-    
     # }
     
     # raise ValueError(games_data)

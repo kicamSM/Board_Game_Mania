@@ -109,6 +109,21 @@ class Game(db.Model):
     __tablename__ = 'games'
     
     id = db.Column(db.String, primary_key=True)
+    
+    
+    def to_dict(self):
+        # data = {
+        #     'id': self.id
+        # }
+        # return data
+        
+        return {c.id: getattr(self, c.id) for c in self.__table__.columns}
+        
+ 
+    def __repr__(self):
+        return f"<Game {self.id}>"
+    
+    
     # name = db.Column(db.String, nullable=False)
     # play_duration = db.Column(db.String, nullable=False)
     # creator_id = db.Column(db.Integer, db.ForeignKey('creators.id'))
@@ -135,9 +150,7 @@ class Game(db.Model):
     #constructor 
     # def __init__(self, id):
     #     self.id = id
- 
-    def __repr__(self):
-        return f"<Game {self.id}>"
+
     
     
     # def __repr__(self):

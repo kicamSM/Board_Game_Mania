@@ -22,7 +22,7 @@ function generateGameHTML(game) {
   }
 
 async function displayGames() {
-    console.log('displayGames is running')
+    console.log('displayGames is running in board_game_mania.py')
     // const response = await axios.get(`${BASE_URL}/games`);
     // console.log(API_BASE_URL)
     const response = await axios.get(`${API_BASE_URL}api/games`);
