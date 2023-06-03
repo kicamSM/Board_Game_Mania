@@ -218,9 +218,7 @@ def api_users_games():
     
     
     list_of_games = user.games
-    print(list_of_games)
-    
-    
+    # print(list_of_games)
     # raise ValueError(list_of_games)
     # returning empty list currently check the classmethod 
     
@@ -252,6 +250,17 @@ def display_users_games():
         return redirect("/")
     
     return render_template('users_games.html', user=user)
+
+@app.route('/users/<game_id>/log_play', methods=['GET','POST'])
+def log_play_for_user(game_id): 
+    """Logs a play for user """
+    
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
+    
+    return("this will log a play")
+    
     
 
 @app.route('/games/<game_id>/add', methods=['GET', 'POST'])
@@ -269,13 +278,14 @@ def add_game_to_user(game_id):
     
     try: 
         user.games.append(new_game)
-        db.session.commit()
+
     
     except IntegrityError:
         db.session.rollback()
         game = Game.query.get(game_id)
         user.games.append(game)
-        db.session.commit()
+        
+    db.session.commit()
     
     return redirect('/games')
         
@@ -322,6 +332,17 @@ def api_games():
     # return render_template('games.html', images=images, names=names, all_min_players=all_min_players, all_max_players=all_max_players, descriptions=descriptions)
 
     # *****************************************************************
+    
+@app.route('/games/<game_id>/delete', methods=['GET', 'POST'])
+def delete_users_game(game_id): 
+    """Delete's Users Game"""
+    user = User.query.get(g.user.id)
+    game = Game.query.get(game_id)
+    # raise ValueError(game)
+    user.games.remove(game)
+    db.session.commit()
+    
+    return redirect('/users/games')
 
 @app.route('/games', methods=['GET'])
 def display_game():

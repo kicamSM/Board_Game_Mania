@@ -25,8 +25,8 @@ function generateGameHTML(game) {
                 <p class="card-text">${game.description_preview}</p>
             </div>
             </div>
-            <a href="/games/{{game_id}}/add" class="button btn1 btn btn-success" style="font-size: 14px">Log Score</a>
-            <a href="/games/{{game_id}}/add" class="button btn1 btn btn-danger" style="font-size: 14px">Delete</a>
+            <a href="/users/${game.id}/log_play" class="button btn1 btn btn-success" style="font-size: 14px">Log Play</a>
+            <a href="/games/${game.id}/delete" class="button btn1 btn btn-danger" style="font-size: 14px">Delete</a>
         </div> 
     </div>
     `;

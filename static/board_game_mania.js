@@ -4,17 +4,16 @@ const API_BASE_URL = 'http://127.0.0.1:5000/'
 
 // console.log(API_BASE_URL)
 
-
 function generateGameHTML(game) {
     return `
-      <div div class="container mt-4 mb-4 p-3 d-flex justify-content-center" data-id=${game.id}> 
-        <div class="card p-4">
-        <div>
-          <h2><a href="/games/${game.id}">${game.name}</a></h1>
-        </div>
-        <div>
-          <img src="${game.images.medium}" class="game-images">
-        </div>
+    <div class="col mb-3" data-id="${game.id}">
+        <div class="card p-4 h-100">
+          <div>
+            <h2><a href="/games/${game.id}">${game.name}</a></h1>
+          </div>
+          <div>
+             <a href="/games/${game.id}"><img src="${game.images.medium}" class="game-images"></a>
+          </div>
         </div>
       </div>
     `;
