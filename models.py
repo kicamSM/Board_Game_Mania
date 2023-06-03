@@ -81,15 +81,15 @@ class Game(db.Model):
     def __repr__(self):
         return f"<Game {self.id}>"
     
-    @classmethod
-    def users_games(cls, sess_user_id): 
-        """Filters the Users Games from Game table"""
+    # @classmethod
+    # def users_games(cls, sess_user_id): 
+    #     """Filters the Users Games from Game table"""
         
-        game_objects = cls.query.filter(User.id==sess_user_id).all()
+    #     game_objects = cls.query.filter(User.id==sess_user_id).all()
         
-        raise ValueError(game_objects) 
+    #     raise ValueError(game_objects) 
         
-        return game_objects 
+    #     return game_objects 
     
     
 user_game = db.Table('user_game', 

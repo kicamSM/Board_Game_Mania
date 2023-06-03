@@ -214,17 +214,6 @@ def api_users_games():
         flash("Please make an account to use this feature.", "danger")
         return redirect("/")
     
-    # raise ValueError(g.user.id)
-    
-    sess_user_id = g.user.id
-    
-    # raise ValueError('you are hitting api/users/games route')
-    
-    # list_of_games = Game.query.all()
-    
-    # list_of_games = UserGame.users_games(sess_user_id)
-    # list_of_games = Game.users_games(sess_user_id)
-    # list_of_games = db.query(Game)
     user = User.query.get(g.user.id)
     
     
@@ -235,12 +224,11 @@ def api_users_games():
     # raise ValueError(list_of_games)
     # returning empty list currently check the classmethod 
     
-    # this is the piece you need to change so you are getting the data from UserGame
     id_list = []
     
     for game in list_of_games: 
         game_dict = game.__dict__
-        game_id = game_dict['id']
+        # game_id = game_dict['id']
         id_list.append(game_dict['id'])
     
     string_ids = ','.join(id_list)
@@ -268,41 +256,26 @@ def display_users_games():
 
 @app.route('/games/<game_id>/add', methods=['GET', 'POST'])
 def add_game_to_user(game_id): 
-    """Adds Game to My Games"""
+    """Adds Game to User Games"""
     # user = g.user
     if not g.user:
         flash("Please make an account to use this feature.", "danger")
         return redirect("/")
     
     new_game = Game(id=game_id) 
+    db.session.add(new_game)
     
     user = User.query.get(g.user.id)
-    # raise ValueError(user)
-
-    # game = Game(id=game_id)
     
-    user.games.append(new_game)
-    # this is appending this game to this user
+    try: 
+        user.games.append(new_game)
+        db.session.commit()
     
-    # raise ValueError(g.user)
-    # users_game = User.games.append(game_id)
-    # users_game = 
-    
-    
-    # raise ValueError(users_game)
-    
-    
-    # users_game = UserGame(user_id=g.user.id, game_id=game_id)
-    # raise ValueError(newGame)
-    db.session.add(new_game)
-    # db.session.add(users_game)
-    db.session.commit()
-    
-    # this is returning the ids for the games
-    
-    # you are going to have to handle a duplicate key error.
-    
-    # note that here you will probably need to change your models so that you are only storing a game id in the games model which is actually going to turn out to be the users/games I believe 
+    except IntegrityError:
+        db.session.rollback()
+        game = Game.query.get(game_id)
+        user.games.append(game)
+        db.session.commit()
     
     return redirect('/games')
         
