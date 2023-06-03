@@ -3,6 +3,7 @@
 import warnings
 from flask import Flask, render_template, request, jsonify, flash, session, redirect, g
 from models import db, connect_db, User, Game, Player, Match
+# UserGame, 
 # , Creator, Genre, Publisher, Language
 # from board_game_mania import GameClass 
 import requests
@@ -213,7 +214,28 @@ def api_users_games():
         flash("Please make an account to use this feature.", "danger")
         return redirect("/")
     
-    list_of_games = Game.query.all()
+    # raise ValueError(g.user.id)
+    
+    sess_user_id = g.user.id
+    
+    # raise ValueError('you are hitting api/users/games route')
+    
+    # list_of_games = Game.query.all()
+    
+    # list_of_games = UserGame.users_games(sess_user_id)
+    # list_of_games = Game.users_games(sess_user_id)
+    # list_of_games = db.query(Game)
+    user = User.query.get(g.user.id)
+    
+    
+    list_of_games = user.games
+    print(list_of_games)
+    
+    
+    # raise ValueError(list_of_games)
+    # returning empty list currently check the classmethod 
+    
+    # this is the piece you need to change so you are getting the data from UserGame
     id_list = []
     
     for game in list_of_games: 
@@ -227,6 +249,10 @@ def api_users_games():
     # raise ValueError(response)
     games = response.json()
     # raise ValueError(games)
+    
+    # this function you need to adjust so that it is the users games and not every users games is the same. 
+    # You will need to adjust your schema so that it is not returning all games but it is returning all games associated with that user. Will need an additional table 
+    
     return games 
 
 @app.route('/users/games', methods=['GET'])
@@ -248,9 +274,28 @@ def add_game_to_user(game_id):
         flash("Please make an account to use this feature.", "danger")
         return redirect("/")
     
-    newGame = Game(id=game_id) 
+    new_game = Game(id=game_id) 
+    
+    user = User.query.get(g.user.id)
+    # raise ValueError(user)
+
+    # game = Game(id=game_id)
+    
+    user.games.append(new_game)
+    # this is appending this game to this user
+    
+    # raise ValueError(g.user)
+    # users_game = User.games.append(game_id)
+    # users_game = 
+    
+    
+    # raise ValueError(users_game)
+    
+    
+    # users_game = UserGame(user_id=g.user.id, game_id=game_id)
     # raise ValueError(newGame)
-    db.session.add(newGame)
+    db.session.add(new_game)
+    # db.session.add(users_game)
     db.session.commit()
     
     # this is returning the ids for the games
