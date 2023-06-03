@@ -251,6 +251,20 @@ def display_users_games():
     
     return render_template('users_games.html', user=user)
 
+@app.route('/games/search', methods=['GET'])
+def search_games(): 
+    """Search Games"""
+    # work on this route tomorrow 
+    # will want to return by game name at least and maybe other things like artists etc.... 
+    return render_template('searched_games.html')
+    
+@app.route('/api/games/search', methods=['GET'])
+def get_searched_games():
+    """Get Searched Games"""
+    
+    # return games 
+    return render_template('this will be the searched games page')
+
 @app.route('/users/<game_id>/log_play', methods=['GET','POST'])
 def log_play_for_user(game_id): 
     """Logs a play for user """
