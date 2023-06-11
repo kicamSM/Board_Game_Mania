@@ -1,53 +1,7 @@
-// const API_BASE_URL = 'http://127.0.0.1:5000/'
-
-// alert('loaded')
-
-// console.log(API_BASE_URL)
-
-// console.log(namesHTML)
-// how to decode html character reference in javascript
-// the names list is encoding ' character in the array wich is why I end up with some like this
-// [&#39;a&#39;, &#39;Tom&#39;, &#39;Ben&#39;, &#39;Sasha&#39;]
-// json = JSON.stringify(namesList)
-
-// json = JSON.parse(namesList)
 
 
 console.log('namesArray in score.js:', namesArray)
-// console.log(json)
 
-// function decodeHtml(namesList) {
-//     var txt = document.createElement("textarea");
-//     txt.innerHTML = namesList;
-//     // return txt.value;
-//     console.log(txt.value)   
-// }
-// console.log(txt.value)
-
-// function decodeHtml(namesHTML) {
-//     let namesList = $("<div/>").html(namesHTML).text();
-//     console.log('namesList1:', namesList)
-
-//     generateGameHTML(namesList)
-// }
-// console.log($("<div/>").html(namesHTML).text())
-// this is working to decode the html
-// let num = sessionStorage.getItem('num_players')
-// console.log('num:', num)
-
-// let names = sessionStorage.getItem('names_list')
-// console.log(names)
-// according to this we are not getting anything from session storage
-
-// function decodeHtml(namesHTML) {
-//         // let namesList = $("<div/>").html(namesHTML).text();
-//         // this is not working setting it as a variable
-//         // console.log('namesList1:', namesList)
-
-//         return $("<div/>").html(namesHTML).text()
-//         generateGameHTML($("<div/>").html(namesHTML).text())
-//     }
-//     console.log(typeof($("<div/>").html(namesHTML).text()))
 
 
 function generateGameHTML() {
@@ -70,21 +24,6 @@ function generateGameHTML() {
 
           y.innerHTML="Row-"+r+" Column-"+c; 
 
-       
-        
-        //   if (y.id[0] == 0) {
-        //     console.log('if statement is running')
-        //     for(i = 0; i <= namesArray.length; i++) {
-        //     console.log('namesArray[i]:', namesArray[i])
-        //     console.log('namesArray[2]:', namesArray[2])
-        //     console.log
-        //         for(let y = 0; y < y.length; y++)
-        //             y.innerHTML = namesArray[i]
-        //     // y.innerHTML = namesArray[2]
-        //     // console.log(y.innerHTML)
-        //     }
-        //   }
-
 
         if (y.id[0] == 0) {
             // console.log(y.id[0][1])
@@ -105,36 +44,6 @@ function generateGameHTML() {
                 document.getElementById(id).innerHTML = namesArray[i]
                 // this is getting the element by id (three ids) and should be setting the value as the value of namesArray index of i 
             }
-       
-
-                
-        //         document.getElementById(`0, ${(y.id[0][i])}`).innerHTML = namesArray[i]
-            //    firstYID = 0, (y.id[0][`${i}`])
-            //  firstYID = document.getElementById(`0, ${(y.id[0][i])}`)
-            // firstYID = document.getElementById('0, 0')
-            // this one came back use this format as a string for the id 
-            // y.innerHTML = 'this is ys inner html'
-            // console.log('firstYID:', firstYID)
-            // console.log('yById:', document.getElementById(0,0))
-            // console.log('yById:', $('#0, 0'))
-            // y.getElementById(0,(y.id[0][`${i}`])).innerHTML = namesArray[i]
-
-
-                    // }
-                    // if(y.id[0][i]) {
-                    //     y.innerHTML = namesArray[i]
-                    // }
-                // console.log('namesArray[i]:', namesArray[i])
-                // console.log('namesArray[2]:', namesArray[2])
-                // console.log
-                // namesArray.forEach(ele, i) => {
-                //     y.innerHTML = namesArray[i]
-                // }
-                    // for(let y = 0; y < y.length; y++)
-                    //     y.innerHTML = namesArray[i]
-                // y.innerHTML = namesArray[2]
-                // console.log(y.innerHTML)
-                // }
               }
 
         // y.innerHTML="Row-"+r+" Column-"+c; 
@@ -143,7 +52,7 @@ function generateGameHTML() {
      }
 
  }
-
+ $(generateGameHTML);
 
 
 
@@ -272,5 +181,105 @@ function generateGameHTML() {
 
 
 // $(decodeHtml);
-$(generateGameHTML);
 // $(displayGames);
+
+
+// ************************************************************************************************
+// notes 
+// ************************************************************************************************
+
+
+// const API_BASE_URL = 'http://127.0.0.1:5000/'
+
+// alert('loaded')
+
+// console.log(API_BASE_URL)
+
+// console.log(namesHTML)
+// how to decode html character reference in javascript
+// the names list is encoding ' character in the array wich is why I end up with some like this
+// [&#39;a&#39;, &#39;Tom&#39;, &#39;Ben&#39;, &#39;Sasha&#39;]
+// json = JSON.stringify(namesList)
+
+// json = JSON.parse(namesList)
+
+// ************************************************************************************************
+ 
+        //   if (y.id[0] == 0) {
+        //     console.log('if statement is running')
+        //     for(i = 0; i <= namesArray.length; i++) {
+        //     console.log('namesArray[i]:', namesArray[i])
+        //     console.log('namesArray[2]:', namesArray[2])
+        //     console.log
+        //         for(let y = 0; y < y.length; y++)
+        //             y.innerHTML = namesArray[i]
+        //     // y.innerHTML = namesArray[2]
+        //     // console.log(y.innerHTML)
+        //     }
+        //   }
+
+
+        // console.log(json)
+// ************************************************************************************************
+
+// function decodeHtml(namesList) {
+//     var txt = document.createElement("textarea");
+//     txt.innerHTML = namesList;
+//     // return txt.value;
+//     console.log(txt.value)   
+// }
+// console.log(txt.value)
+
+// function decodeHtml(namesHTML) {
+//     let namesList = $("<div/>").html(namesHTML).text();
+//     console.log('namesList1:', namesList)
+
+//     generateGameHTML(namesList)
+// }
+// console.log($("<div/>").html(namesHTML).text())
+// this is working to decode the html
+// let num = sessionStorage.getItem('num_players')
+// console.log('num:', num)
+
+// let names = sessionStorage.getItem('names_list')
+// console.log(names)
+// according to this we are not getting anything from session storage
+
+// function decodeHtml(namesHTML) {
+//         // let namesList = $("<div/>").html(namesHTML).text();
+//         // this is not working setting it as a variable
+//         // console.log('namesList1:', namesList)
+
+//         return $("<div/>").html(namesHTML).text()
+//         generateGameHTML($("<div/>").html(namesHTML).text())
+//     }
+//     console.log(typeof($("<div/>").html(namesHTML).text()))
+
+// ************************************************************************************************
+      //         document.getElementById(`0, ${(y.id[0][i])}`).innerHTML = namesArray[i]
+            //    firstYID = 0, (y.id[0][`${i}`])
+            //  firstYID = document.getElementById(`0, ${(y.id[0][i])}`)
+            // firstYID = document.getElementById('0, 0')
+            // this one came back use this format as a string for the id 
+            // y.innerHTML = 'this is ys inner html'
+            // console.log('firstYID:', firstYID)
+            // console.log('yById:', document.getElementById(0,0))
+            // console.log('yById:', $('#0, 0'))
+            // y.getElementById(0,(y.id[0][`${i}`])).innerHTML = namesArray[i]
+
+
+                    // }
+                    // if(y.id[0][i]) {
+                    //     y.innerHTML = namesArray[i]
+                    // }
+                // console.log('namesArray[i]:', namesArray[i])
+                // console.log('namesArray[2]:', namesArray[2])
+                // console.log
+                // namesArray.forEach(ele, i) => {
+                //     y.innerHTML = namesArray[i]
+                // }
+                    // for(let y = 0; y < y.length; y++)
+                    //     y.innerHTML = namesArray[i]
+                // y.innerHTML = namesArray[2]
+                // console.log(y.innerHTML)
+                // }
