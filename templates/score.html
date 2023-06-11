@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Score{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+
+{% block content %}
+
+<body>
+    <main id="content">
+        <div>
+            <div class="container">
+                <div class="heading-container" id="home-heading-container">
+                    <h1>Score:</h1>
+                </div>
+                    <div div class="container mt-4 mb-4 p-3 d-flex justify-content-center"> 
+                        <div class="card p-4" style="width: 800px">
+                            <div class="text-center" id="score-board">
+                                <h2 class="card-title">{{ name }}</h2>
+                                <h3></h3>
+                                
+                                <!-- <table border="1" width="200" height="200">
+                                    <thead id="table-head"> -->
+                                        <!-- <tr id="table-head">
+                                            NOTE THIS IS WHERE THE DYNAMICALLY APPENDED HTML of table head should be FROM score.js
+                                        </tr>
+                                    </thead>
+                                     <tbody> -->
+                                        <!-- <tr id="table-body"> -->
+                                            <!-- NOTE THIS IS WHERE THE DYNAMICALLY APPENDED HTML of table body should be FROM score.js -->
+                                        <!-- </tr> -->
+                                    <!-- </tbody> -->
+                                <!-- </table> -->
+
+                                <table id="myTable" border="1">
+                                </table><form>
+                                <input type="button" onclick="createTable()" value="Create the table">
+                                </form></body></html>
+                           
+                            </div>
+                            <a href="/users/games" class="button btn1 btn btn-info" style="font-size: 14px">Back</a>
+                            <a href="/games/{{game_id}}/add" class="button btn1 btn btn-success" style="font-size: 14px">Complete</a>
+                            </div>
+                          </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </main> 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js" integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script
+src="https://code.jquery.com/jquery-3.4.1.min.js"
+integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+crossorigin="anonymous"></script>
+<script type="text/javascript"> var namesArray = JSON.parse('{{ names_list_json|safe }}');  
+console.log(namesArray)
+</script>
+<!-- <script type="text/javascript"> var namesArray = "{{ names_list|safe }}";  
+    console.log(namesArray)
+</script> -->
+<!-- pip safe okay with being valid html injecting into the input BAD scenary user makes username as html but in this case user who si adding the code is the user who running the data and therefore they could only hack themselves. -->
+
+<script src="/static/score.js"></script>
+
+</body>
+{% endblock %}

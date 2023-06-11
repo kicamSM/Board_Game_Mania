@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Choose Number Players{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+
+{% block content %}
+
+<body>
+    <main id="content">
+        <div>
+            <div class="container">
+                <div class="heading-container" id="home-heading-container">
+                    <h1 class="h1background">Enter the Players Names for {{ g_name }}</h1>
+                </div>
+                <div>
+                    <div div class="container mt-4 mb-4 p-3 d-flex justify-content-center"> 
+                        <div class="card p-4" style="width: 800px">
+                            <!-- <h2> There are {{ num_players }} players! </h2> -->
+                            <div class="text-center form-group" id="name-entry">
+                            <!-- NOTE THIS IS WHERE THE DYNAMICALLY APPENDED HTML IS FROM game_details.js -->
+                            </div class="justify-content-center">
+                                <a onclick="history.back()" class="button btn1 btn btn-info" style="font-size: 14px">Back</a>
+                            </div>
+                            <!-- {% if g.user %} -->
+                            <!-- <a href="/games/{{game_id}}/add" class="button btn1 btn btn-success" style="font-size: 14px">Create Scoreboard</a> -->
+                            <!-- {% endif %} -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main> 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js" integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script
+src="https://code.jquery.com/jquery-3.4.1.min.js"
+integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+crossorigin="anonymous"></script>
+<!-- <script src="/static/log_play.js"></script> -->
+<!-- <script type="text/javascript"> var players = "{{ players }}"; </script> -->
+<!-- <script>players=parseInt("{{ players }}")</script> -->
+<!-- <script type="text/javascript"> var name = "{{ name }}";
+ </script>  -->
+<script type="text/javascript"> var num_players = "{{ num_players }}"; </script>
+<script type="text/javascript"> var g_name = "{{ g_name }}"; </script>
+<script type="text/javascript"> var username = "{{ username }}"; </script>
+<script src="/static/name_entry.js"></script>
+</body>
+{% endblock %}
+
+

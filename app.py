@@ -1,13 +1,16 @@
 """Board Game Mania"""
 
 import warnings
-from flask import Flask, render_template, request, jsonify, flash, session, redirect, g
+from flask import Flask, render_template, request, jsonify, flash, session, redirect, g, url_for
 from models import db, connect_db, User, Game, Player, Match
+from flask_session import Session
+# note you have to install this as pip3 install flask-session
 # UserGame, 
 # , Creator, Genre, Publisher, Language
 # from board_game_mania import GameClass 
 import requests
-from forms import RegistrationForm, LoginForm, UserEditForm
+import json
+from forms import RegistrationForm, LoginForm, UserEditForm, ScoreNameForm
 from sqlalchemy.exc import IntegrityError
 
 API_BASE_URL = 'https://api.boardgameatlas.com/api/'
@@ -27,6 +30,9 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 app.config['SECRET_KEY'] = "iloverollerderby12"
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 app.app_context().push()
 
@@ -251,29 +257,274 @@ def display_users_games():
     
     return render_template('users_games.html', user=user)
 
-@app.route('/games/search', methods=['GET'])
-def search_games(): 
+# *******************************************************************************************
+# currently what I am working on 
+
+@app.route('/games/search', methods=['GET', 'POST'])
+# this may not need to be a post method/ standby 
+def display_search_games(): 
     """Search Games"""
+    print('display search games is running in app.py')
     # work on this route tomorrow 
     # will want to return by game name at least and maybe other things like artists etc.... 
-    return render_template('searched_games.html')
+    # games=games
+    # raise ValueError('games:', games)
     
-@app.route('/api/games/search', methods=['GET'])
-def get_searched_games():
-    """Get Searched Games"""
+    # string_data = session['data']
+    # string_data = session.get('data')
+    # raise ValueError(string_data)
+    # if session.get('data') == True:
+    #     return 'there is session data'
+    # else: 
+    #     print('nothing appears to be in session')
     
+    # data = session.get('games')
+    data = session['games']
+    jsonify(data)
+    
+    print('data from dispaly search games:', data)
+    
+    
+    
+    return render_template('game_search.html')
+
+@app.route('/api/games/search', methods=['GET', 'POST'])
+# @app.route('/api/games/search/<string:name>', methods=['GET', 'POST'])
+def api_search_games():
+    # def api_search_games(name):
+    """API Get Searched Games"""
+    # print("api/games/search is running in app.py")
+    # raise ValueError(session.get('name'))
+    # session.get('name')
+    # if 'name' in session: 
+    #     name = session['name']
+    # raise ValueError(name)
+    form_req = dict(request.form)
+    name = form_req['q']
+    response = requests.get(f'{API_BASE_URL}/search?name={name}&limit=30&client_id={client_id}')
+    g_data = response.json()
+    
+    return render_template('game_search.html', g_data=g_data)
+    
+    # test = requests.get(f'{API_BASE_URL}/search?ids=vJkLBDgn1j&limit=10&client_id={client_id}')
+    
+  
+    # g_data = test.json()
+    # print(g_data)
+    
+    # data = json.loads(response.text)
+    # convert data to dict 
+    # raise ValueError(data)
+    # print(data)
+
+    # data = json.dumps(data)
+    #convert data to string 
+    # print(data)
+    # print(type(data))
+    
+    # min_players = g_data['games'][0]['min_players']
+    # max_players = g_data['games'][0]['max_players']
+    # name = g_data['games'][0]['name']
+    # description = g_data['games'][0]['name']
+    
+    # sessionStorage.setItem("data", JSON.stringify(games))
+    # session['games'] = games.__dict__
+    # print(session['games'])
+    
+    # session['games'] = data
+    
+    # new_data = session['games']
+    
+    # session.commit() this was not working 
+    
+    # print('data in session', session)
+    # when storingvalue in session the data is being emptied ???? Object is there values are not.... 
+    
+    # localStorage.setItem('games', data)
+    # print(localStorage.games)
+    
+    # return redirect(url_for('display_search_games', games=games))
+    # return redirect('/games/search')
+    # print(g_data)
+    
+   
+# @app.route('/games/search/var', methods=['GET', 'POST'])
+# def get_search_variable():
+#     """API Get Searched Games"""
+    
+#     print("/games/search/var is running in app.py")
+#     form_req = dict(request.form)
+#     # session['name'] = form_req['q']
+#     name = form_req['q']
+#     # session['name'] = name
+#     # raise ValueError(name)
+#     # db.session.add(name)
+    
+#     return redirect(url_for('api_search_games', name=name))
+  
+    # could do radio button to click what you are search for. Could also check multiple responses and see if a response returns back something??? 
+    # search = request.args.get('q') 
+    # raise ValueError(request.values)
+    # name = request.args.get('q') 
+    # name = request.form.get("id")
+
+    
+    # raise ValueError(request.args)
+    # name = request.get_data('q')
+    # this is returning None 
+    # name = request.args.getlist('q')
+    
+    # if request.method == 'POST': 
+    # form_req = dict(request.form)
+    # raise ValueError(form_req)
+    # name = form_req['q']
+    # raise ValueError(name)
+    
+    # raise ValueError(form_req['q'])
+    # raise ValueError(request.form)
+    # raise ValueError(dict(request.form.get()))
+    # raise ValueError(request.form)
+    # raise ValueError('name:', name)
+    # get the value in the search bar
+    # response = requests.get(f'{API_BASE_URL}/search?name={name}&limit=10&client_id={client_id}')
+    # response = requests.get(f'{API_BASE_URL}/search?limit=100&client_id={client_id}')
+    # https://api.boardgameatlas.com/api/search?name=Catan&client_id=JLBr5npPhV
+    # raise ValueError(response)
+        
+    # games = response.json()
     # return games 
-    return render_template('this will be the searched games page')
+    
+    
+    # raise ValueError(games)
+    # return redirect(url_for(display_search_games(), games=games))
+    
+    # return games
+    # raise ValueError(games)
+    # return render_template('this will be the searched games page')
+
+# *******************************************************************************************
 
 @app.route('/users/<game_id>/log_play', methods=['GET','POST'])
 def log_play_for_user(game_id): 
     """Logs a play for user """
+    print('/users/<game_id>/log_play is running in app.py')
     
     if not g.user:
         flash("Please make an account to use this feature.", "danger")
         return redirect("/")
     
-    return("this will log a play")
+    # form = ScoreNameForm()
+    # if form.validate_on_submit():
+    #     first_name = form.first_name.data
+    #     last_name = form.last_name.data
+    #     user_id = form.user_id.data
+    
+    # raise ValueError(game_id)
+    
+    response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
+    # this is returning one game 
+    
+    g_data = response.json()
+    # raise ValueError(g_data)
+
+    # min_players = [min_players['min_players'] for min_players in g_data['games']]
+    # raise ValueError(min_players)
+    # max_players = [max_players['max_players'] for max_players in g_data['games']]
+    min_players = g_data['games'][0]['min_players']
+    max_players = g_data['games'][0]['max_players']
+    name = g_data['games'][0]['name']
+    # raise ValueError(max_players)
+    
+    return render_template("log_play.html", min_players=min_players, max_players=max_players, name=name)
+
+@app.route('/log_play/<string:g_name>/name_entry', methods=['GET','POST'])
+def name_entry(g_name):
+    form_req = dict(request.form)
+    num_players = form_req['q']
+    username = g.user.username
+
+    # session['num_players'] = num_players
+
+    return render_template('name_entry.html', num_players=num_players, g_name=g_name, username=username)
+
+@app.route('/log_play/<string:name>/score', methods=['GET','POST'])
+def keep_score(name): 
+    """Track the Score"""
+    # raise ValueError(name)
+    names_dict = dict(request.form)
+    names_list = list(names_dict.values())
+    
+    names_list_json = json.dumps(names_list)
+    
+    
+    # if 'num_players' in session:
+    #     print('num_players is in session')
+        # raise ValueError('num_player is in session')
+        #this is currently running can I access this in javascript?  
+        
+    # raise  ValueError(names_list)
+    # raise ValueError(len(form_req))
+    # raise ValueError(form_req)
+    
+    # for i in range(1, len(form_req)):
+        # player[i] = form_req[f'player{i}_name']
+    
+        # console.log(player1)
+    
+    # player2 = form_req['player2_name']
+    # raise ValueError(player2)
+    # form = ScoreNameForm()
+    
+    # for key, value in form_req.items():
+    #     raise ValueError(key, value)
+    
+    # for k, v in form_req.items():
+    #     if player[0] == v[0]:
+    #         print(k, v)
+    
+    # locals().update(form_req)
+    
+    # print(player1) 
+    
+    # for key,val in form_req.items():
+    #     exec(key + '=val')
+        
+    # raise ValueError(form_req)
+    
+    # if form.validate_on_submit():
+    #     first_name = form.first_name.data
+    #     last_name = form.last_name.data
+    #     user_id = form.user_id.data
+    
+    # session['names_list'] = names_list
+    # session.add(names_list)
+    # session.commit()
+    
+    # session['num'] = 42
+    # session.add(names_list)
+    # session.commit()
+
+    # raise ValueError(session['names_list'])  
+
+    return render_template('score.html', names_list_json=names_list_json)
+    # return render_template('score.html', names_list=names_list)
+
+
+# @app.route('/api/<game_id>/log_play', methods=['Get'])
+# def api_log_play(game_id):
+#     """API gets the game information to log play"""
+    
+#     response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
+#     raise ValueError(game_id)
+#     raise ValueError(response)
+#     game = response.json()
+    
+#       # all_min_players = [min_players['min_players'] for min_players in g_data['games']]
+#     # all_max_players = [max_players['max_players'] for max_players in g_data['games']]
+    
+#     return game
+    
+    
     
     
 
@@ -302,13 +553,19 @@ def add_game_to_user(game_id):
     db.session.commit()
     
     return redirect('/games')
-        
 
+@app.route('/games', methods=['GET'])
+def display_game():
+    """Display Games"""
+    
+    return render_template('games.html')
+        
 @app.route('/api/games', methods=['GET'])
 def api_games():
     """API Get Games"""
     response = requests.get(f'{API_BASE_URL}/search?limit=100&client_id={client_id}')
     games = response.json()
+    
     # raise ValueError(games)
     # games = { 
     # "names": "[game_name['name'] for game_name in g_data['games']]"
@@ -358,12 +615,6 @@ def delete_users_game(game_id):
     
     return redirect('/users/games')
 
-@app.route('/games', methods=['GET'])
-def display_game():
-    """Display Games"""
-    
-    return render_template('games.html')
-
 @app.route('/games/<game_id>', methods=['GET'])
 def display_game_details(game_id): 
     """Display Game Details"""
@@ -371,8 +622,9 @@ def display_game_details(game_id):
     return render_template('game_details.html', game_id=game_id)
 
 @app.route('/api/games/<game_id>', methods=['GET'])
-def api_game(game_id): 
+def api_game(game_id):  
     """API Get Game"""
+    
     response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
 
     game = response.json()

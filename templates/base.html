@@ -21,10 +21,13 @@
         <ul class="nav navbar-nav navbar-right">
           {% if request.endpoint != None %}
           <li>
-            <form class="navbar-form navbar-right" action="/games/search">
-              <input name="q" class="form-control" placeholder="Search Board Game" id="search">
-              <button class="btn btn-default" id="search-btn">
-                <span class="fa fa-search">&#128269</span>
+            <form class="navbar-form navbar-right" action="/api/games/search" method="POST">
+              <!-- action="/api/games/search"
+              go back to this if /games/search/var doesnt work -->
+              <!-- action needs to be/api/games/search to get value back from search bar -->
+              <input name="q" class="form-control" placeholder="Search By Name" id="search" type="search">
+              <button class="btn btn-default" id="search-btn" type="submit">
+                <span class="fa fa-search" id="search-icon">&#128269</span>
               </button>
             </form>
           </li>

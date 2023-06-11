@@ -21,3 +21,10 @@ class UserEditForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
     email = StringField('E-mail', validators=[Email()])
     password = PasswordField('Password', validators=[InputRequired()])
+    
+class ScoreNameForm(FlaskForm): 
+    """Form for logging plays"""
+    
+    first_name = StringField('First Name', validators=[InputRequired()])
+    last_name = StringField('Last Name', validators=[InputRequired()])
+    user_id = StringField("User Id")

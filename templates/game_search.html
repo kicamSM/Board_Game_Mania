@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+
+{% block content %}
+
+<body>
+    <main id="content">
+        <div>
+            <div class="container">
+                <div class="heading-container" id="home-heading-container">
+                    <h1 class="h1background">Search Results</h1>
+                </div>
+                <div class="container" >
+                    <div class="row row-cols-md-3 game-card">
+                        <!-- getting rid of row here goes back to one col -->
+                        <!-- adding text center on this is getting rid of the second row -->
+                        <!-- getting rid of this row-cols-1 doesnt appear to do anything -->
+                        <!-- px-lg-5 this did not work to dad spacing between cards  -->
+                            {% for game in g_data['games'] %}
+                            <!-- <div class="row row-cols-1 row-cols-md-3"></div> -->
+                            <div class="mb-3 search-card-space" data-id="{{game['id']}}">
+                                <!-- mb-3 this determined vertical spacing between the two cards above and below -->
+                                <!-- removing this col from above gave us three rows but no spacing between left and right  -->
+
+                                <div class="card p-4 h-100 ">
+                                <!-- <div class="col p-4"> -->
+                                    <!-- keep the one above in it seems to -->
+                                    <!-- <div class="card h-100 text-center"> -->
+                                    <div>
+                                        <div>
+                                            <h2><a href="/games/{{game['id']}}">{{game['name']}}</a></h1>
+                                        </div>
+                                        <div>
+                                            <a href="/games/{{game['id']}}"><img src="{{game['images']['medium']}}" class="game-images"></a>
+                                        </div>
+                                        {% if g.user %}
+                                        <a href="/games/{{game_id}}/add" class="button btn1 btn btn-success" style="font-size: 14px">Add to My Games</a>
+                                        {% endif %}
+                                    <!-- <img src="{{game['images']['medium']}}" class="card-img-top" alt="..."> -->
+                                    <!-- <div class="card-body"> -->
+                                        <!-- <h5 class="card-title">{{game['name']}}</h5> -->
+                                    <!-- </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- </div>   -->
+                            {% endfor %}
+                    </div> 
+                </div>
+         </div>
+
+    </main> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js" integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script
+src="https://code.jquery.com/jquery-3.4.1.min.js"
+integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+crossorigin="anonymous"></script>
+<!-- <script src="/static/game_search.js"></script> -->
+<!-- for some reason this is trying to get /games/static/game_search.js which is incorrect-->
+<!-- <script src="static/game_search.js"></script> -->
+</body>
+{% endblock %}
+
+
