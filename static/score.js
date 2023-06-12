@@ -2,57 +2,121 @@
 
 console.log('namesArray in score.js:', namesArray)
 
+function generateHeaderHTML() {
+    // let header = document.getElementById('myTable').insertRow(0);
+    let table = document.getElementById('myTable');
+    table.className = 'table'
+    let header = table.createTHead()
+    header.className = 'thead'
+    // header.setAttribute('scope', 'col')
+    // header.scopeName = 'col'
+    // $('table tbody th').attr('scope','col');
+    console.log(header)
+    // console.log(header)
+    let row = header.insertRow(0)
+    // console.log(row)
+    // reversedArray = namesArray.reverse();
+    // reversedArray.forEach(function (name, index) {
+        // this did reverse the names but not the index
 
+    namesArray.forEach(function (name, index) {
+        console.log('name:', name)
+        console.log('index:', index)
+    
+    // let cell = header.insertCell(index);
+    let cell = row.insertCell()
+    console.log(cell)
+    cell.id = (`0-${index}`)
+    cell.innerHTML = name
+    })
 
-function generateGameHTML() {
+   $(generateBodyHTML);
+
+}
+// breaking this up because the issue of having too many for loops nested is causing problems. 
+
+function generateBodyHTML() {
     console.log('generateGameHTML is running in score.js')
-    row_num = window.prompt("Input number of rows", 1);
+    row_num = window.prompt("Input number of turns if known. Otherwise, press ok", 1);
 
-    // console.log(namesArray)
-    console.log(namesArray.length)
     col_num = namesArray.length;
+    // console.log(col_num)
     // console.log(cn)
     // console.log(players)
     // cn = window.prompt("Input number of columns",1);
       
-     for(let r = 0; r < parseInt(row_num,10); r++) {
-       let x=document.getElementById('myTable').insertRow(r);
-       for(let c = 0; c < parseInt(col_num,10); c++) {
-         let y = x.insertCell(c);
-          y.id = (`${r}, ${c}`)
-          console.log(y.id)
+    //  for(let r = 0; r < parseInt(row_num, 10); r++) {
+        for(let row = 0; row < row_num; row++) {
+            let table = document.getElementById('myTable');2
+            let body = table.createTBody();
+            // body.setAttribute(contenteditable)
+            body.className = 'tbody'
+            // console.log(body)
+            let rowEle = body.insertRow()
+            // console.log('first row:', row)3
+ 
+            for(let cell = 0; cell < parseInt(col_num,10); cell++) {
+            //  let y = x.insertCell(c);
+                let cellEle = rowEle.insertCell(cell);
+                cellEle.id = (`${row}-${cell}`)
+                console.log('row:', row)
+                cellEle.className = 'data'
+                // cellEle.contenteditable = 'true'
+                cellEle.setAttribute('contenteditable', 'true')
+            //   console.log(y.id)
+                // cellEle.innerHTML="Row-"+row+" Column-"+cell;
+                console.log(cellEle)
 
-          y.innerHTML="Row-"+r+" Column-"+c; 
+                $('[contenteditable="true"]').keypress(function(e) {
+                    var x = event.charCode || event.keyCode;
+                    if (isNaN(String.fromCharCode(e.which)) && x!=46 || x===32 || x===13 || (x===46 && event.currentTarget.innerText.includes('.'))) e.preventDefault();
+            });
+
+        }
+    }
+}
 
 
-        if (y.id[0] == 0) {
-            // console.log(y.id[0][1])
-            console.log('if statement is running')
+// now you want to say if all columns have been edited when there is only one row, then an additional row. Continue to do this until complete has been clicked
+
+    $(generateHeaderHTML)
+
+
+        // if (y.id[0] == 0) {
+        //     // console.log(y.id[0][1])
+        //     console.log('if statement is running')
             
-            for(i = 0; i <namesArray.length; i++) {
-            console.log('for statement is running')
-        //     console.log('namesArray.length:', namesArray.length)
-                console.log('i:', i)
-                console.log('namesArray[i]:', namesArray[i])
-                let id = (`0, ${i}`)
+        //     for(i = 0; i <namesArray.length; i++) {
+        //     console.log('for statement is running')
+        // //     console.log('namesArray.length:', namesArray.length)
+        //         console.log('i:', i)
+        //         console.log('namesArray[i]:', namesArray[i])
+        //         let id = (`0, ${i}`)
                 // my understanding of this is that i should be equal to 0, 1, and 2 becuase of the for loop 
                 // i = 0 (i starts at zero) i < namesArray.length if names array.length = 3 (i will stop at 2)
                 // i++ (i will continue in incriments of one)
                 // this should give me three ids 
-                console.log(id)
+                // console.log(id)
 
-                document.getElementById(id).innerHTML = namesArray[i]
+                // document.getElementById(id).innerHTML = namesArray[i]
                 // this is getting the element by id (three ids) and should be setting the value as the value of namesArray index of i 
-            }
-              }
+            // }
+
+            // document.getElementById(id).innerHTML = namesArray[i]
+            // if this goes outside the loop all items are returning in the loop no html is getting set
+
+            //   }
+            //   document.getElementById(id).innerHTML = namesArray[i]
+            // id is not defined here
+
 
         // y.innerHTML="Row-"+r+" Column-"+c; 
             // y.innerHTML = y.id
-        }
-     }
+        // }
+//      }
 
- }
- $(generateGameHTML);
+//  }
+//  $(generateGameHTML);
 
 
 
@@ -283,3 +347,31 @@ function generateGameHTML() {
                 // y.innerHTML = namesArray[2]
                 // console.log(y.innerHTML)
                 // }
+
+// *****************************************************************************************************
+      
+            //     $(document).ready(function () {
+            //         $('#bt').click(function () {
+            //             $('0-1')
+            //                 .attr('contenteditable', 'true')
+            //                 .focus();
+            //         });
+            //     });
+            // }
+        
+            // }
+
+                    // $(cellEle).keypress( "click", function(event) {
+                // // event.target.attr('contenteditable', 'true')
+                // if (isNaN(String.fromCharCode(e.which))) e.preventDefault();
+                // });
+
+            // $(cellEle).on( "click", function(event) {
+            //     // event.target.attr('contenteditable', 'true')
+            //     ele = document.getElementById(event.target.id)
+            //     console.log(ele)
+            //     ele.attr('contenteditable', 'true')
+            //     alert( $( this ).html() );
+            //     console.log( event.target );
+            
+            // } );
