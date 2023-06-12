@@ -452,9 +452,23 @@ def keep_score(name):
     """Track the Score"""
     # raise ValueError(name)
     names_dict = dict(request.form)
-    names_list = list(names_dict.values())
     
+    # if val in names_dict.value == None: 
+    #     val = Player(names_dict.index('val'))
+    
+    names_list = list(names_dict.values())
+    # raise ValueError(names_list)
+    # if '' in names_list: 
+    for name in names_list: 
+        if name == '':
+            index = (names_list.index(''))
+            nemo = names_list[index]
+            player_num = (index + 1)
+            nemo = (f'Player {player_num}')
+            names_list[index] = nemo
+
     names_list_json = json.dumps(names_list)
+    # grabbing names out of form
     
     
     # if 'num_players' in session:
