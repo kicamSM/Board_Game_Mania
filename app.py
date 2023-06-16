@@ -2,7 +2,8 @@
 
 import warnings
 from flask import Flask, render_template, request, jsonify, flash, session, redirect, g, url_for
-from models import db, connect_db, User, Game, Player, Match
+from models import db, connect_db, User, Game, Match
+# Player,
 from flask_session import Session
 # note you have to install this as pip3 install flask-session
 # UserGame, 
@@ -221,12 +222,17 @@ def api_users_games():
         return redirect("/")
     
     user = User.query.get(g.user.id)
-    
-    
+    # raise ValueError(user)
+
     list_of_games = user.games
+    # raise ValueError(list_of_games.len())
+    # if list_of_games.len = 0; 
+    
     # print(list_of_games)
     # raise ValueError(list_of_games)
     # returning empty list currently check the classmethod 
+    
+    # May want to put something in there that lets the user know that they have no games. If they have not yet added any games. 
     
     id_list = []
     
@@ -435,20 +441,20 @@ def log_play_for_user(game_id):
     name = g_data['games'][0]['name']
     # raise ValueError(max_players)
     
-    return render_template("log_play.html", min_players=min_players, max_players=max_players, name=name)
+    return render_template("log_play.html", min_players=min_players, max_players=max_players, name=name, game_id=game_id)
 
-@app.route('/log_play/<string:g_name>/name_entry', methods=['GET','POST'])
-def name_entry(g_name):
+@app.route('/log_play/<string:g_name>/<game_id>/name_entry', methods=['GET','POST'])
+def name_entry(g_name, game_id):
     form_req = dict(request.form)
     num_players = form_req['q']
     username = g.user.username
 
     # session['num_players'] = num_players
 
-    return render_template('name_entry.html', num_players=num_players, g_name=g_name, username=username)
+    return render_template('name_entry.html', num_players=num_players, g_name=g_name, username=username, game_id=game_id)
 
-@app.route('/log_play/<string:name>/score', methods=['GET','POST'])
-def keep_score(name): 
+@app.route('/log_play/<string:g_name>/<game_id>/score', methods=['GET','POST'])
+def keep_score(g_name, game_id): 
     """Track the Score"""
     # raise ValueError(name)
     names_dict = dict(request.form)
@@ -466,7 +472,10 @@ def keep_score(name):
             player_num = (index + 1)
             nemo = (f'Player {player_num}')
             names_list[index] = nemo
-
+            
+            if index == 0:
+                names_list[0] = g.user.username
+                
     names_list_json = json.dumps(names_list)
     # grabbing names out of form
     
@@ -520,7 +529,7 @@ def keep_score(name):
 
     # raise ValueError(session['names_list'])  
 
-    return render_template('score.html', names_list_json=names_list_json)
+    return render_template('score.html', names_list_json=names_list_json, g_name=g_name, game_id=game_id)
     # return render_template('score.html', names_list=names_list)
 
 
@@ -538,8 +547,81 @@ def keep_score(name):
     
 #     return game
     
+@app.route('/log_play/<game_id>/save/<names_list_json>', methods=['GET', 'POST'])
+def save_results(game_id, names_list_json): 
+    """Saves Results to Table"""
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
+    
+    names_list = json.loads(names_list_json)
+    num_players = len(names_list)
+    # raise ValueError(len(names_list))
+    user = User.query.get(g.user.id)
+    winStr = request.form['win']
+    win = json.loads(winStr.lower())
+    # raise ValueError(win)
+    new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
+    
+    db.session.add(new_match)
+    db.session.commit()
     
     
+    
+ 
+    list_matches = user.matches
+    # list_match_ids = user.matches.game_id
+    
+    list_game_ids = []
+    
+    for match in list_matches: 
+        list_game_ids.append(match.game_id)
+    
+    game_ids_no_dup = list(dict.fromkeys(list_game_ids))
+    
+    session['game_ids'] = game_ids_no_dup
+    
+    # raise ValueError(game_ids_no_dup)
+# need to save this list in session to grab in additional route that will return the games --> then you can grab the name and pic from that game 
+    
+    # game id, user_id, win/lose 
+    # raise ValueError(user.matches)
+    
+    # what you want to display is the name of the game number of times played win or loss and num of players 
+    # could later add in date and other players etc... 
+    
+    # name of the game 
+        # you can get this through the id making an api call 
+    
+    #num times game is played     
+        #num times played will be from that user id how many matches with that game id 
+        
+    #num times win for a particular game 
+        #num wins for that game num times game is played with num wins
+        
+    #num times loss for a particular game 
+        #num losses for that game num times game is played with num wins
+    
+    # return render_template('match_results.html', user=user)
+    return redirect('/api/results')
+
+@app.route('/api/results', methods=['GET'])
+def api_result_games():
+    """gets the games that have results"""
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
+    
+    gam_ids = session['game_ids']
+    # raise ValueError('games:', games)
+    # gets game ids out of session for results 
+    
+    response = requests.get(f'{API_BASE_URL}/search?&client_id={client_id}')
+    games = response.json()
+    
+    raise ValueError(games)
+    
+    return games 
     
 
 @app.route('/games/<game_id>/add', methods=['GET', 'POST'])

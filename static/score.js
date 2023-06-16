@@ -1,6 +1,7 @@
 
 
-console.log('namesArray in score.js:', namesArray)
+
+// console.log('namesArray in score.js:', namesArray)
 
 function generateHeaderHTML() {
     // let header = document.getElementById('myTable').insertRow(0);
@@ -8,26 +9,12 @@ function generateHeaderHTML() {
     table.className = 'table'
     let header = table.createTHead()
     header.className = 'thead'
-    // header.setAttribute('scope', 'col')
-    // header.scopeName = 'col'
-    // $('table tbody th').attr('scope','col');
-    console.log(header)
-    // console.log(header)
     let row = header.insertRow(0)
-    // console.log(row)
-    // reversedArray = namesArray.reverse();
-    // reversedArray.forEach(function (name, index) {
-        // this did reverse the names but not the index
 
     namesArray.forEach(function (name, index) {
-        console.log('name:', name)
-        console.log('index:', index)
-    
-    // let cell = header.insertCell(index);
-    let cell = row.insertCell()
-    console.log(cell)
-    cell.id = (`0-${index}`)
-    cell.innerHTML = name
+        let cell = row.insertCell()
+        cell.id = (`head-${index}`)
+        cell.innerHTML = name
     })
 
    $(generateBodyHTML);
@@ -35,8 +22,20 @@ function generateHeaderHTML() {
 }
 // breaking this up because the issue of having too many for loops nested is causing problems. 
 
+// function generateButtonHTML(win, num_players, game_id) {
+//     console.log('generate button html is running')
+//     console.log('win:', win)
+//     return `
+//     <form action="/log_play/${game_id}/save" method="POST">
+//         <input type="hidden" name="win" id="win" value="${win}"></input>
+//         <input type="hidden" name="num_players" id="num_players" value="${num_players}"></input>
+//         <button class="button btn1 btn btn-success" type="submit" style="font-size: 14px">Save</button>
+//     </form>`
+   
+// }
+
 function generateBodyHTML() {
-    console.log('generateGameHTML is running in score.js')
+    // console.log('generateGameHTML is running in score.js')
     row_num = window.prompt("Input number of turns if known. Otherwise, press ok", 1);
 
     col_num = namesArray.length;
@@ -47,8 +46,9 @@ function generateBodyHTML() {
       
     //  for(let r = 0; r < parseInt(row_num, 10); r++) {
         for(let row = 0; row < row_num; row++) {
-            let table = document.getElementById('myTable');2
+            let table = document.getElementById('myTable');
             let body = table.createTBody();
+            // body.id = 'tbody'
             // body.setAttribute(contenteditable)
             body.className = 'tbody'
             // console.log(body)
@@ -59,25 +59,345 @@ function generateBodyHTML() {
             //  let y = x.insertCell(c);
                 let cellEle = rowEle.insertCell(cell);
                 cellEle.id = (`${row}-${cell}`)
-                console.log('row:', row)
-                cellEle.className = 'data'
+                // console.log('row:', row)
+                if(cell = namesArray.indexOf(namesArray[cell])) {
+                    // sets class = name from names array in correct column 
+                    // cellEle.className = namesArray[cell]
+                    cellEle.className = `Player${cell}`
+                    console.log('cell:', cell)
+                    // ['ben', 'tom', 'chris']
+                }
+                // cellEle.className = 'data'
                 // cellEle.contenteditable = 'true'
                 cellEle.setAttribute('contenteditable', 'true')
             //   console.log(y.id)
                 // cellEle.innerHTML="Row-"+row+" Column-"+cell;
-                console.log(cellEle)
+                // console.log(cellEle)
+
+                // I wonder if this is messing with the content editable being updated since I am adding a event listener of clikc on the element? 
+                // cellEle.addEventListener("click", function(e) {
+                //     console.log('add event listener is running')
+                //     e.preventDefault();
+                //     // id = this.id
+                //     // sessionStorage.setItem('id', JSON.stringify(id));
+                //     // console.log('id:', id)
+                //     // row = id.substring(0, id.indexOf('-'))
+                //     // console.log('id.indexOf('-'):', id.indexOf('-'))
+                //     // console.log('typeof(id.indexOf('-')):', typeof(id.indexOf('-')))
+                //     // this is returning the row not the col
+                //     // console.log('row:', row)
+                //     // idLastCharInd = (id.length - 1)
+
+                //     // console.log('idLastCharInd:', idLastCharInd)
+                //     // col = id.substring((id.indexOf('-') + 1))
+                
+                //     // col = id.substring(1, 3)
+                //     // console.log('id.indexOf('-'):', id.indexOf('-'))
+                //     // console.log('idLastCharInd:', idLastCharInd)
+                //     // console.log('col:', col)
+
+                //     // $(upDateScore(col, id))
+                //     $(sumTotalTable)
+                    
+                // })
+
+            //  make contenteditable true when other elements have contentiable filled out already. 
+
+            // if the element clicked on is greater than or equal to row and col && all of those has inner.html != "" then do this....
+                
+                
+            // id = JSON.parse(sessionStorage.getItem('id'))
+            // console.log('this id is running:', id)
+
+            // let col_num = id.substring((id.indexOf('-') + 1))
+
+            // if(col_num = namesArray.length && )  
 
                 $('[contenteditable="true"]').keypress(function(e) {
                     var x = event.charCode || event.keyCode;
+                    // console.log('x:', x)
                     if (isNaN(String.fromCharCode(e.which)) && x!=46 || x===32 || x===13 || (x===46 && event.currentTarget.innerText.includes('.'))) e.preventDefault();
-            });
+                    // console.log(currentTarget.id)
 
+                
+                
+                // if document.getElementById(${`footer-${}`})
+            });
         }
+    }
+    $(generateFooterHTML)
+}
+
+function generateFooterHTML() {
+    console.log('generateFooterHTML is running in score.js')
+    row_num = 1
+    col_num = (namesArray.length);
+    // console.log(col_num)
+    let table = document.getElementById('myTable');
+    let footer = table.createTFoot();
+    let rowEle = footer.insertRow()
+
+    for(let cell = 0; cell < col_num; cell++) {
+        //  let y = x.insertCell(c);
+    let cellEle = rowEle.insertCell();
+    // console.log(cellEle)
+    cellEle.id = (`foot-${cell}`)
+    cellEle.className = 'footer'
+    cellEle.innerHTML="Score"; 
+    // console.log('row:', row)
     }
 }
 
 
-// now you want to say if all columns have been edited when there is only one row, then an additional row. Continue to do this until complete has been clicked
+
+// function upDateScore(col, id) {
+
+//     // document.addEventListener("DOMContentLoaded") {
+//     footer = document.getElementById(`foot-${col}`)
+//     // console.log(footer)
+//     // cellEle.addEventListener("click", function(e) {
+//     //     console.log('add event listener is running')
+//     //     e.preventDefault();
+//     //     id = this.id)
+
+//     if(footer.innerHTML = 'Score') {
+//         // console.log('if statement is running in sum values')
+//         cell = document.getElementById(id)
+//         console.log('cell:', cell)
+//         // console.log('cell.innerhtml:', cell.innerHTML)
+//         // this is not actually getting the innnerHTML
+//         // console.log(cell.innerText)
+//         footer.innerHTML = `${cell.innerHTML}`
+//         // document.getElementById(`foot-${col}`).innerHTML = `${cell.innerHTML}`
+//         if(cell.innerHTML != '') {
+//             console.log('this element has innerhtml')
+//         //   inner html is not loading until second click on element
+//         }
+        
+
+//         $(sumTotalTable)
+
+//     } }
+// }
+
+
+function sumTotalTable() {
+    // let rows = table.querySelectorAll('tr')
+    let rows = $("#myTable").find("tbody>tr");
+    // console.log("rows:", rows)
+
+    // let footers = document.getElementsByClassName('footer')
+    let footers = $(".footer")
+    // console.log('footers:', footers)
+
+    for (let i = 0; i < rows[0].cells.length; i++) {
+        // console.log('rows[0].cells.length:', rows[0].cells.length)
+        // console.log('note that these two should be equal')
+        // console.log('namesArray.length:', namesArray.length)
+        var sum = 0; 
+
+        for (let j = 0; j < rows.length; j++) {
+            console.log('rows.length:', rows.length)
+            var cell = rows[j].cells[i];
+            // j is the index of the row 
+            // i is the index of the cell
+            // basically we are taking the table body back apart the way we put it together
+            // console.log('cell.innerText:', cell.innerText)
+            // console.log('typeof(cell.innerText):', typeof(cell.innerText))
+            // this is returning the string 
+            // cells are going to be individual cells how many per row 
+            //j is internal row num wherease cell is internal cell num
+            if (!isNaN(parseInt(cell.textContent, 10))) {
+                sum += parseInt(cell.textContent, 10);
+            }
+            // sum += parseInt(cell.textContent, 10);
+        }
+        // innner loop you were not previously working with so that was your missing piece. 
+
+        footers[i].textContent = sum;
+    }
+
+           // Add the sum cells to the new row
+    //        for (let i = 0; i < footers.length; i++) {
+    //         newRow.appendChild(sumCells[i]);
+
+    // }
+
+    $(declareWinOrLoss)
+}
+
+function declareWinOrLoss() {
+    let userTotalObj = document.getElementById("foot-0")
+    console.log("userTotalObj:", userTotalObj)
+    // userTotal = userTotalObj.innerText
+    let userTotalStr = userTotalObj.textContent
+    let userTotal = parseInt(userTotalStr)
+
+    let totalsObj = document.getElementsByClassName("footer")
+  
+    for(let i = 1; i < totalsObj.length; i++) {
+
+        let total = parseInt(totalsObj[i].innerText, 10);
+        console.log('total:', total)
+        let input = document.getElementById('win')
+
+        if(total >= userTotal) {
+            console.log(false)
+            let win = false
+            input.setAttribute("value", `${win}`)
+            // localStorage.setItem('win', win)
+            }
+        else {
+            console.log(true)
+            let win = true
+            input.setAttribute("value", `${win}`)
+        }
+        // let input = document.getElementById('win')
+        // console.log(input)
+        // input.setAttribute("value", win)
+       
+    }
+    // console.log(true)
+    // let win = true
+
+    // let num_players = namesArray.length
+    // console.log("num_players:", num_players)
+    // console.log("game_id:", game_id)
+    // localStorage.setItem('win', win)
+    // let input = document.getElementById('win')
+    // console.log(input)
+    // // input.setAttribute("value", win)
+    // input.setAttribute("value", "true")
+    // this works cant pass in win standby 
+    // console.log(input)
+
+    // $(generateButtonHTML(win, num_players, game_id))
+    // $(createUploadForm(win, num_players))
+    // const axios = require('axios')
+    // const res = await axios.post('/log_play/${game_id}/save')
+    // axios.post('/log_play/${game_id}/save', {
+    //     Num_players: num_players, 
+    //     Win: win
+    //     .then(function (response) {
+    //         console.log(response);
+    //       })
+    // })
+    // saveResults(win, num_players)
+}
+
+// async function saveResults(win) {
+//     const res = await axios.post('/log_play/${game_id}/save', {
+//         Win: win, Num_players: num_players
+//     })
+//     console.log(res)
+// }
+
+
+// function createUploadForm(win){
+//     // let userName = localStorage.getItem("username");
+//     let form = document.createElement("form");
+//     form.setAttribute("method", "POST");
+//     form.setAttribute("enctype", "multipart/form-data");
+//     form.setAttribute("action", "/log_play/${game_id}/save");
+
+//     //create hidden input element for user ID
+//     let userID = document.createElement("input");
+//     userID.setAttribute("type", "hidden");
+//     userID.setAttribute("win", "win");
+//     userID.setAttribute("name", "win");
+//     userID.setAttribute("value", win);
+
+// }
+        
+       
+
+// *****************************************************************************************
+        // for(let i = 0; i < namesArray.length; i++) {
+        //     // sumVal = + parseInt(table.columns[i].cells.innerHTML)
+        //     // console.log(sumVal)
+        //     // columns = $(`.${namesArray[i]}`)
+        //     // columnshtml = document.getElementsByClassName(`.${namesArray[i]}`)
+
+        //     myArray = []
+        //     // let Player[i] = [];
+
+        //     // let col = $(`.${namesArray[i]}`)
+        //     // console.log
+        //     mArray = []
+        //     columns = $(".Player1")
+        //     // columnsText = columns[i].innerText
+        //     console.log('columnsText:', columnsText)
+        //     console.log('columns[i]:', columns[i])
+        //     console.log('testing InnerText:', columns[1].innerText)
+        //     console.log('testing textContent:', columns[1].textContent)
+        //     console.log('testing InnerHTML:', columns[1].innerHTML)
+        //     // this is retruning the inside fo the collums fyi
+        //     myArray.push(columns.innerHTML)
+        //     console.log(mArray)
+        //     // this worked to get the elements 
+        //     console.log('col:', columns)
+        //     rows_w = $("tbody td .Player2")
+        //     console.log('rows_w:', rows_w)
+        //     rows = $(`.${namesArray[i]} tbody tr`)
+        //     console.log('rows:', rows)
+        //     console.log('before jquery')
+        //     $( document ).ready( function() {
+        //         var sum_total = 0;
+        //         $(`.namesArray[${i}] tbody tr`).each(function(i) {
+        //             console.log($(`.${namesArray[i]} tbody tr`))
+        //             // console.log('i:', i)
+        //             // console.log('jquery is running')
+        //             // console.log(index)
+        //       sum_total += $(this).children().eq(i).text() * 1;
+        //     });
+        //     console.log('sum_total:', sum_total)
+
+        //     $( `td #foot-${i}` ).text( sum_total );
+        
+        // });
+    
+        // this is the last code I was running ABOVE 
+        // *************************************************************************************
+
+            // let columnsObject = document.getElementsByClassName(namesArray[i])
+            // this in theory should return as many arrays as there are names which is probably my problem. 
+            // console.log('columnsObject:', columnsObject)
+
+            // myArray.push(columnsObject[i].innerHTML)
+            // console.log('myArray', myArray)
+
+            // let columnsVal = columnsObject[i].innerHTML.push(Player[i])
+            // console.log('columnsObject1:', columnsObject)
+            // col1 = columnsObject[0]
+            // console.log('col1:', col1)
+            // colTxt = col1.innerHTML
+            // console.log('colTxt:', colTxt)
+            // col1Val = col1.innerHTML
+            // let columnsArray[i] = columnsNodeList[i]
+            // columnsText[i] = columnsArray[i].innerHTML
+            // console.log(Player[i])
+
+            // player2col = document.getElementsByClassName(namesArray[1])
+            // player2text = player2col[0].innerHTML
+            // console.log('columnsObject1:', columnsObject)
+            // console.log('columns:', columns)
+            // console.log('col1:', col1)
+            // console.log('col1Val:', col1Val)
+        
+        // }
+        // console.log(player2text)
+            // console.log('columnsObject2:', columnsObject)
+        // console.log('columnsArray:', typeof(columnsArray))
+        // console.log('columnsText:', columnsText)
+
+    // }
+
+
+
+
+
+
+// now you want to say if all columns have been edited when there is only  row, then an additional row. Continue to do this until complete has been clicked
 
     $(generateHeaderHTML)
 

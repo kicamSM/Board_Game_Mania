@@ -12,14 +12,14 @@
         <div>
             <div class="container">
                 <div class="heading-container" id="home-heading-container">
-                    <h1 class="h1background">Score:</h1>
+                    <h1 class="h1background">{{ g_name }} Score:</h1>
                 </div>
                     <div div class="container mt-4 mb-4 p-3 d-flex justify-content-center"> 
-                        <div class="card p-4" style="width: 800px">
+                        <div class="card p-4" id="table-card" style="overflow:auto">
+                            <!-- style="overflow:auto" -->
+                            <!-- style="width: 800px, -->
                             <div class="text-center" id="score-board">
-                                <h2 class="card-title">{{ name }}</h2>
-                                <h3></h3>
-                                
+                                <!-- <h2 class="card-title">{{ name }}</h2> -->
                                 <!-- <table border="1" width="200" height="200">
                                     <thead id="table-head"> -->
                                         <!-- <tr id="table-head">
@@ -38,9 +38,25 @@
                                 <input type="button" onclick="createTable()" value="Create the table">
                                 </form></body></html> -->
                            
-                            </div>
-                            <a href="/users/games" class="button btn1 btn btn-info" style="font-size: 14px">Back</a>
-                            <a href="/games/{{game_id}}/add" class="button btn1 btn btn-success" style="font-size: 14px">Complete</a>
+                            </div id="save-div">
+                            <a href="/users/games" class="button btn1 btn btn-danger" style="font-size: 14px">Back</a>
+                       
+                            <form action="/log_play/{{game_id}}/save/{{names_list_json}}" method="POST">
+                                <!-- <input type="hidden" name="num_players" id="num_players" value="{{ num_players }}"></input> -->
+                                <!-- <a href="/log_play/{{game_id}}/save" class="button btn1 btn btn-success" style="font-size: 14px">Save</a> -->
+                                <!-- <script>
+                                    function lenNamesArray(){
+                                        let num_players = namesArray.length 
+                                        console.log('num_players:', num_players)
+                                        return num_players
+                                    }
+                                    
+                                    lenNamesArray()
+                                    </script> -->
+                                <button class="button btn1 btn btn-success" style="font-size: 14px" type="submit" name="win" id="win" value="">Save</button>
+                                <!-- <button class="hidden" id="num_players" name="num_players" value="{{namesArray}}"></button> -->
+                            </form>
+                            <a onclick="sumTotalTable()" class="button btn1 btn btn-info" style="font-size: 14px">Sum Scores</a>
                             </div>
                           </div>
                 </div>
@@ -57,6 +73,38 @@ crossorigin="anonymous"></script>
 <script type="text/javascript"> var namesArray = JSON.parse('{{ names_list_json|safe }}');  
 console.log(namesArray)
 </script>
+<script type="text/javascript"> var game_id = "{{ game_id }}"; </script>
+
+
+
+<!-- <script type="text/javascript"> num_players = "{{namesArray}}.length" </script> -->
+
+<script>
+    // function sumTotal() {
+    //     var sum = 0;
+    //     console.log('sum:', sum)
+
+    //     $('.Player 2').each(function () {
+    //         sum += parseInt(this.innerText);
+    //     });
+
+    //     alert(sum); }
+
+//         var sum = 0;
+// 			//iterate through each textboxes and add the values
+//             console.log('$(".Player 2")', 	$(".Player 2")[0])
+// 			$(".Player 2").each(function() {
+// 				//add only if the value is number
+// 				if(!isNaN(this.value) && this.value.length!=0) {
+// 					sum += parseFloat(this.value);
+// 				}
+// 			});
+// 			//.toFixed() method will roundoff the final sum to 2 decimal places
+// 			$("#subtotal").val(sum.toFixed(2));
+//              alert(sum);
+//         }
+
+// </script>
 <!-- <script type="text/javascript"> var namesArray = "{{ names_list|safe }}";  
     console.log(namesArray)
 </script> -->

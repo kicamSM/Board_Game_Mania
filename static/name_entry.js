@@ -9,7 +9,7 @@ let int_players = parseInt(num_players)
 
 function createForm() {
     let form = document.createElement("form");
-    form.action = `/log_play/${g_name}/score`;
+    form.action = `/log_play/${g_name}/${game_id}/score`;
     form.method = "post";
 
     for (let i = 1; i <= int_players; i++) {
@@ -18,6 +18,7 @@ function createForm() {
         inputName.name = "player" + i + "_name";
         inputName.placeholder = "Player " + i + " name";
         inputName.className = "name-fields form-control"
+        
         if(i == 1) {
             inputName.value = username
         }

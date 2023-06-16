@@ -377,13 +377,25 @@ td {
   color: red;
 } */
 
+#score-board {
+  background-color: #dddddd;
+}
+
+#table-card {
+  width: 98%;
+  /* width: 900px; */
+  /* max-width: fit-content; */
+  justify-content: center;
+  text-align: center;
+}
+
 .table {
   border-collapse: collapse;
   margin: 25px 0;
   font-size: 0.9em;
   font-family: sans-serif;
   min-width: 400px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.418); */
 }
 
 .table thead tr {

@@ -22,7 +22,7 @@
                     <!-- <form action="/log_play/{{ name }}/score" method="POST"> -->
                     <!-- <form action="" method="POST" id="player-count"> -->
                     <!-- <form action="/users/{{ game_id }}/log_play" method="POST"> -->
-                    <form action="/log_play/{{ name }}/name_entry" method="POST">
+                    <form action="/log_play/{{ name }}/{{ game_id }}/name_entry" method="POST">
                     <div class="slidecontainer">
                         <input name="q" type="range" value="{{ max_players }}" min="{{ min_players }}" max="{{ max_players }}" oninput="this.nextElementSibling.value = this.value">
                         <output>{{ max_players }}</output>

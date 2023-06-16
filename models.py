@@ -28,8 +28,11 @@ class User(db.Model):
     email = db.Column(db.String, nullable=False)
     username = db.Column(db.Text, nullable=False,  unique=True)
     password = db.Column(db.Text, nullable=False)
+    matches = relationship('Match', backref='user')
     
     games = relationship('Game', secondary='user_game', back_populates='users')
+    
+
  
     # usersgames = db.relationship('UserGame', backref=('users'))
         
@@ -80,17 +83,12 @@ class Game(db.Model):
     
     def __repr__(self):
         return f"<Game {self.id}>"
-    
     # @classmethod
     # def users_games(cls, sess_user_id): 
     #     """Filters the Users Games from Game table"""
-        
     #     game_objects = cls.query.filter(User.id==sess_user_id).all()
-        
     #     raise ValueError(game_objects) 
-        
     #     return game_objects 
-    
     
 user_game = db.Table('user_game', 
     # Base.metadata,
@@ -98,6 +96,26 @@ user_game = db.Table('user_game',
     db.Column('game_id', db.String, db.ForeignKey(Game.id), primary_key=True)
 )
 
+
+    
+class Match(db.Model):
+    """Matches Model"""
+    __tablename__ = 'matches'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    game_id = db.Column(db.String, db.ForeignKey('games.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    num_players = db.Column(db.Integer, nullable=False)
+    win = db.Column(db.Boolean, nullable=False)
+    
+    # users = relationship('User', secondary='user_match', back_populates='matches' )
+    # working on getting matches relationship set up to users. 
+    # this would be a two way relationship you need a one way relationsip 
+    # each match has one user 
+    # each user can have many matches 
+    def __repr__(self):
+        return f"<Match {self.id} {self.game_id} {self.user_id}>"
+     
     
  
 
@@ -137,32 +155,33 @@ user_game = db.Table('user_game',
 
 # **************************************************
     
-class Player(db.Model):
-    """Players Model"""
-    __tablename__ = 'players'
+# class Player(db.Model):
+#     """Players Model"""
+#     __tablename__ = 'players'
     
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    first_name = db.Column(db.String)
-    last_name = db.Column(db.String)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     # first_name = db.Column(db.String)
+#     # last_name = db.Column(db.String)
+#     name = db.Column(db.String)
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
  
     
       
-    def __repr__(self):
-        return f"<Player {self.id} {self.first_name} {self.last_name} {self.user_id} {self.match_player_id} >"
+#     def __repr__(self):
+#         return f"<Player {self.id} {self.name} {self.user_id} {self.match_player_id} >"
     
     
     
-class Match(db.Model):
-    """Matches Model"""
-    __tablename__ = 'matches'
+# class Match(db.Model):
+#     """Matches Model"""
+#     __tablename__ = 'matches'
     
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    game_id = db.Column(db.String, db.ForeignKey('games.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-      
-    def __repr__(self):
-        return f"<Match {self.id} {self.game_id} {self.user_id}>"
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     game_id = db.Column(db.String, db.ForeignKey('games.id'))
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+#     win = db.Column(db.Boolean)
+#     def __repr__(self):
+#         return f"<Match {self.id} {self.game_id} {self.user_id}>"
      
 # class GameGenre(db.Model):
 #     """Games Genres Model"""
@@ -186,17 +205,17 @@ class Match(db.Model):
 #     def __repr__(self):
 #         return f"<GameLanguage {self.game_id} {self.language_id}>"
     
-class MatchPLayer(db.Model):
-    """Match Player Model"""
-    __tablename__ = 'matches_players'
+# class MatchPLayer(db.Model):
+#     """Match Player Model"""
+#     __tablename__ = 'matches_players'
     
-    player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
-    match_id = db.Column(db.Integer, db.ForeignKey('matches.id'), primary_key=True)
-    win = db.Column(db.Boolean, nullable=False)
+#     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
+#     match_id = db.Column(db.Integer, db.ForeignKey('matches.id'), primary_key=True)
+#     win = db.Column(db.Boolean, nullable=False)
     
       
-    def __repr__(self):
-        return f"<MatchPlayer {self.player_id} {self.match_id} {self.win}>"
+#     def __repr__(self):
+#         return f"<MatchPlayer {self.player_id} {self.match_id} {self.win}>"
     
    # **********************************************************
     # Game Table Notes 
