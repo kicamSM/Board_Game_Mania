@@ -2,6 +2,7 @@
 
 import warnings
 from flask import Flask, render_template, request, jsonify, flash, session, redirect, g, url_for
+
 from models import db, connect_db, User, Game, Match
 # Player,
 from flask_session import Session
@@ -568,9 +569,18 @@ def save_results(game_id, names_list_json):
     
     
     
- 
+
     list_matches = user.matches
+    
+    user_matches = [match.serialize() for match in Match.query.filter(Match.user_id == g.user.id)]
     # list_match_ids = user.matches.game_id
+    # raise ValueError(list_matches)
+    # matches_dict = dict((x.id, x) for x in object_list)
+    
+    # lst_matches = json.encode(list_matches)
+    # raise ValueError(lst_matches)
+    
+    matches_json = json.dumps(user_matches)
     
     list_game_ids = []
     
@@ -579,7 +589,14 @@ def save_results(game_id, names_list_json):
     
     game_ids_no_dup = list(dict.fromkeys(list_game_ids))
     
+    game_ids_no_dup_json = json.dumps(game_ids_no_dup)
+    
+    # raise ValueError(game_ids_no_dup)
+    
     session['game_ids'] = game_ids_no_dup
+
+
+    return render_template('match_results.html', user=user, matches_json=matches_json, game_ids_no_dup_json=game_ids_no_dup_json)
     
     # raise ValueError(game_ids_no_dup)
 # need to save this list in session to grab in additional route that will return the games --> then you can grab the name and pic from that game 
@@ -603,7 +620,7 @@ def save_results(game_id, names_list_json):
         #num losses for that game num times game is played with num wins
     
     # return render_template('match_results.html', user=user)
-    return redirect('/api/results')
+    # return redirect('/api/results')
 
 @app.route('/api/results', methods=['GET'])
 def api_result_games():
@@ -612,14 +629,19 @@ def api_result_games():
         flash("Please make an account to use this feature.", "danger")
         return redirect("/")
     
-    gam_ids = session['game_ids']
+    game_ids = session['game_ids']
     # raise ValueError('games:', games)
     # gets game ids out of session for results 
+    # raise ValueError(game_ids)
+
+    string_ids = ','.join(game_ids)
+    # raise ValueError(string_ids)
     
-    response = requests.get(f'{API_BASE_URL}/search?&client_id={client_id}')
+    response = requests.get(f'{API_BASE_URL}/search?ids={string_ids}&client_id={client_id}')
+
     games = response.json()
     
-    raise ValueError(games)
+    # raise ValueError(games)
     
     return games 
     

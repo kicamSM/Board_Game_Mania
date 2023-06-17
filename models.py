@@ -108,6 +108,16 @@ class Match(db.Model):
     num_players = db.Column(db.Integer, nullable=False)
     win = db.Column(db.Boolean, nullable=False)
     
+    def serialize(self): 
+        return {
+            'id': self.id, 
+            'game_id': self.game_id,
+            'user_id': self.user_id,
+            'num_players': self.num_players,
+            'win': self.win
+        }
+        
+    
     # users = relationship('User', secondary='user_match', back_populates='matches' )
     # working on getting matches relationship set up to users. 
     # this would be a two way relationship you need a one way relationsip 
