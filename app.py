@@ -563,41 +563,47 @@ def save_results(game_id, names_list_json):
     win = json.loads(winStr.lower())
     # raise ValueError(win)
     new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
-    
+    # new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
     db.session.add(new_match)
     db.session.commit()
     
+    # list_matches = user.matches
+    # user_matches = [match.serialize() for match in Match.query.filter(Match.user_id == g.user.id)]
+    # matches_json = json.dumps(user_matches)
+    # list_game_ids = []
     
+    # for match in list_matches: 
+    #     list_game_ids.append(match.game_id)
+    # game_ids_no_dup = list(dict.fromkeys(list_game_ids))
+    # game_ids_no_dup_json = json.dumps(game_ids_no_dup)
     
+    # session['game_ids'] = game_ids_no_dup
 
+    # return render_template('match_results.html', user=user, matches_json=matches_json, game_ids_no_dup_json=game_ids_no_dup_json)
+    return redirect('/match/results')
+    
+    
+@app.route('/match/results', methods=['GET', 'POST'])
+def display_results():
+    """Display results"""
+    
+    user = User.query.get(g.user.id)
+    
     list_matches = user.matches
-    
     user_matches = [match.serialize() for match in Match.query.filter(Match.user_id == g.user.id)]
-    # list_match_ids = user.matches.game_id
-    # raise ValueError(list_matches)
-    # matches_dict = dict((x.id, x) for x in object_list)
-    
-    # lst_matches = json.encode(list_matches)
-    # raise ValueError(lst_matches)
-    
     matches_json = json.dumps(user_matches)
-    
     list_game_ids = []
     
     for match in list_matches: 
         list_game_ids.append(match.game_id)
-    
     game_ids_no_dup = list(dict.fromkeys(list_game_ids))
-    
     game_ids_no_dup_json = json.dumps(game_ids_no_dup)
     
-    # raise ValueError(game_ids_no_dup)
-    
     session['game_ids'] = game_ids_no_dup
-
-
-    return render_template('match_results.html', user=user, matches_json=matches_json, game_ids_no_dup_json=game_ids_no_dup_json)
     
+    return render_template('match_results.html', user=user, matches_json=matches_json, game_ids_no_dup_json=game_ids_no_dup_json)
+    # return('hello')
+
     # raise ValueError(game_ids_no_dup)
 # need to save this list in session to grab in additional route that will return the games --> then you can grab the name and pic from that game 
     
@@ -655,6 +661,7 @@ def add_game_to_user(game_id):
         return redirect("/")
     
     new_game = Game(id=game_id) 
+    # raise ValueError(new_game)
     db.session.add(new_game)
     
     user = User.query.get(g.user.id)
@@ -670,7 +677,7 @@ def add_game_to_user(game_id):
         
     db.session.commit()
     
-    return redirect('/games')
+    return redirect('/users/games')
 
 @app.route('/games', methods=['GET'])
 def display_game():
