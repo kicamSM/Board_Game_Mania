@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Game Results{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+
+{% block content %}
+
+<body>
+    <main id="content">
+        <div>
+            <div class="container">
+                <div class="heading-container" id="home-heading-container">
+                    <h1>Game Results</h1>
+                </div>
+                    <div div class="container mt-4 mb-4 p-3 d-flex justify-content-center" data-id="{{ game_id }}"> 
+                        <div class="card p-4" style="width: 800px">
+                            <div class="text-center" id="game-details">
+                            <!-- NOTE THIS IS WHERE THE DYNAMICALLY APPENDED HTML IS FROM game_details.js -->
+                            </div>
+                            <div>                               
+                                <a onclick="history.back()" class="button btn1 btn btn-info" style="font-size: 14px">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main> 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js" integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script
+src="https://code.jquery.com/jquery-3.4.1.min.js"
+integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+crossorigin="anonymous"></script>
+<script src="/static/game_results_details.js"></script>
+<script type="text/javascript"> var game_id = "{{ game_id }}"; </script>
+
+</body>
+{% endblock %}

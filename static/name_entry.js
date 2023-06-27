@@ -18,9 +18,17 @@ function createForm() {
         inputName.name = "player" + i + "_name";
         inputName.placeholder = "Player " + i + " name";
         inputName.className = "name-fields form-control"
+    
+
+        let inputEmail = document.createElement("input")
+        inputEmail.type = "email";
+        inputEmail.name = "player" + i + "_email";
+        inputEmail.placeholder = "Player " + i + " email";
+        inputEmail.className = "name-fields form-control"
         
         if(i == 1) {
             inputName.value = username
+            inputEmail.value = email
         }
         // var inputAge = document.createElement("input");
         // inputAge.type = "number";
@@ -28,6 +36,7 @@ function createForm() {
         // inputAge.placeholder = "Player " + i + " age";
     
         form.appendChild(inputName);
+        form.appendChild(inputEmail)
         // form.appendChild(inputAge);
       }
 

@@ -4,9 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 from sqlalchemy.orm import relationship, backref
 import sqlalchemy as sa
+from sqlalchemy.orm import declarative_base
 # added this
 
-
+Base = declarative_base()
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -108,6 +109,9 @@ class Match(db.Model):
     num_players = db.Column(db.Integer, nullable=False)
     win = db.Column(db.Boolean, nullable=False)
     
+    
+    players = relationship('Player', secondary='match_player', back_populates='matches')
+    
     def serialize(self): 
         return {
             'id': self.id, 
@@ -165,20 +169,24 @@ class Match(db.Model):
 
 # **************************************************
     
-# class Player(db.Model):
-#     """Players Model"""
-#     __tablename__ = 'players'
+class Player(db.Model):
+    """Players Model"""
+    __tablename__ = 'players'
     
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     # first_name = db.Column(db.String)
-#     # last_name = db.Column(db.String)
-#     name = db.Column(db.String)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
- 
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    # first_name = db.Column(db.String)
+    # last_name = db.Column(db.String)
+    # name = db.Column(db.String, nullable=True)
+    # username = db.Column(db.Text, db.ForeignKey('users.username'), nullable=True,  unique=True)
+    email = db.Column(db.String, nullable=False, unique=True)
+    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    matches = relationship('Match', secondary='match_player', back_populates='players' )
     
-      
-#     def __repr__(self):
-#         return f"<Player {self.id} {self.name} {self.user_id} {self.match_player_id} >"
+    def __str__(self):
+        return f"<Player {self.id} {self.email}>"
+    
+    def __repr__(self):
+        return f"<Player {self.id} {self.email}>"
     
     
     
@@ -222,10 +230,23 @@ class Match(db.Model):
 #     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
 #     match_id = db.Column(db.Integer, db.ForeignKey('matches.id'), primary_key=True)
 #     win = db.Column(db.Boolean, nullable=False)
+#     score = db.Column(db.Integer, nullable=False)
     
       
 #     def __repr__(self):
-#         return f"<MatchPlayer {self.player_id} {self.match_id} {self.win}>"
+#         return f"<MatchPlayer {self.player_id} {self.score} {self.match_id} {self.win}>"
+    
+match_player = db.Table('match_player', db.Model.metadata,
+    # Base.metadata,
+    db.Column('match_id', db.Integer, db.ForeignKey(Match.id), primary_key=True),
+    db.Column('player_id', db.Integer, db.ForeignKey(Player.id), primary_key=True),
+    db.Column('win', db.Boolean, nullable=False), 
+    db.Column('score', db.Integer, nullable=False)
+    
+    # on_conflict_do_nothing = True
+)
+
+# maybe add metadata to this table
     
    # **********************************************************
     # Game Table Notes 

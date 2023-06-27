@@ -7,9 +7,9 @@ function generateGameHTML(game, idCount, wins, loss) {
     <div class="col mb-3">
       <div class="card p-4 h-100">
         <div>
-          <h1 class="card-title">${game.name}</h1>
+        <a href="/game/results/${game.id}"><h1 class="card-title">${game.name}</h1></a>
           <div>
-            <a href="/matches"><img src="${game.images.medium}" class="game-images"></a>
+            <a href="/game/results/${game.id}"><img src="${game.images.medium}" class="game-images"></a>
           </div>
           <div class="card-body">
             <h3>Total Number of Plays: ${idCount}</h3>

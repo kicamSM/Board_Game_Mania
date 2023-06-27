@@ -1,5 +1,5 @@
 
-
+// import axios from 'axios';
 
 // console.log('namesArray in score.js:', namesArray)
 
@@ -189,6 +189,7 @@ function sumTotalTable() {
     // let footers = document.getElementsByClassName('footer')
     let footers = $(".footer")
     // console.log('footers:', footers)
+    let sumArray = []
 
     for (let i = 0; i < rows[0].cells.length; i++) {
         // console.log('rows[0].cells.length:', rows[0].cells.length)
@@ -215,6 +216,9 @@ function sumTotalTable() {
         // innner loop you were not previously working with so that was your missing piece. 
 
         footers[i].textContent = sum;
+        sumArray.push(sum)
+        console.log('sumArray', sumArray)
+
     }
 
            // Add the sum cells to the new row
@@ -222,8 +226,11 @@ function sumTotalTable() {
     //         newRow.appendChild(sumCells[i]);
 
     // }
-
+    document.getElementById('form-route').action = `/log_play/${game_id}/save/${namesArray}/${sumArray}`
     $(declareWinOrLoss)
+    // $('#form-route').attr('action', `/log_play/${game_id}/save/${namesArray}}/${sumArray}`);
+    
+    // $(postScoreToRoute(sumArray))
 }
 
 function declareWinOrLoss() {
@@ -257,33 +264,61 @@ function declareWinOrLoss() {
         // input.setAttribute("value", win)
        
     }
-    // console.log(true)
-    // let win = true
-
-    // let num_players = namesArray.length
-    // console.log("num_players:", num_players)
-    // console.log("game_id:", game_id)
-    // localStorage.setItem('win', win)
-    // let input = document.getElementById('win')
-    // console.log(input)
-    // // input.setAttribute("value", win)
-    // input.setAttribute("value", "true")
-    // this works cant pass in win standby 
-    // console.log(input)
-
-    // $(generateButtonHTML(win, num_players, game_id))
-    // $(createUploadForm(win, num_players))
-    // const axios = require('axios')
-    // const res = await axios.post('/log_play/${game_id}/save')
-    // axios.post('/log_play/${game_id}/save', {
-    //     Num_players: num_players, 
-    //     Win: win
-    //     .then(function (response) {
-    //         console.log(response);
-    //       })
-    // })
-    // saveResults(win, num_players)
+ 
 }
+
+$(generateHeaderHTML)
+
+//  async function postScoreToRoute(sumArray) {
+
+//     const res = await axios.post(`http://localhost:5000/(/log_play/${game_id}/save/${namesArray}`, {scores: { sumArray }})
+//     console.log(res)
+ 
+// }
+
+// function postScoreToRoute(sumArray) {
+//     const axios = require('axios');
+
+//     const url = `http://localhost:5000/(/log_play/${game_id}/save/${namesArray}`;
+
+//     console.log(url)
+//     const data = {
+//     name: 'John Doe',
+//     age: 30
+//     };
+
+//     axios.post(url, data)
+//     .then(response => {
+//     console.log(response.data);
+//     })
+//     .catch(error => {
+//     console.error(error);
+//     });
+// }
+
+// function postScoreToRoute(sumArray) {
+//     console.log('sumArray in postScoreToRoute:', sumArray)
+//     // response = requests.post('http://localhost:5000/results/score_data', sumArray)
+
+//     response = requests.post(`/log_play/${game_id}/${namesArray}`, json.dumps(sumArray))
+
+// }
+
+// async function postScoreToRoute(sumArray) {
+//     console.log('sumArray in postScoreToRoute:', sumArray)
+//     // response = requests.post('http://localhost:5000/results/score_data', sumArray)
+
+//     const response = await fetch(`/log_play/${game_id}/${namesArray}`, {
+//         method: 'POST', 
+//         body: `text=${text}`, 
+//         headers: {
+//             'Content-Type': 'application/x-www-for-urlencoded',
+//         },
+//         });
+//         const json = await response.json();
+//         return json.label === 'pos'
+//     }
+
 
 // async function saveResults(win) {
 //     const res = await axios.post('/log_play/${game_id}/save', {
@@ -399,7 +434,7 @@ function declareWinOrLoss() {
 
 // now you want to say if all columns have been edited when there is only  row, then an additional row. Continue to do this until complete has been clicked
 
-    $(generateHeaderHTML)
+
 
 
         // if (y.id[0] == 0) {

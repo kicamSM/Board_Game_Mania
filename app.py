@@ -3,9 +3,12 @@
 import warnings
 from flask import Flask, render_template, request, jsonify, flash, session, redirect, g, url_for
 
-from models import db, connect_db, User, Game, Match
-# Player,
+from models import db, connect_db, User, Game, Match, Player, match_player
+# from axios import axios
 from flask_session import Session
+
+from pathlib import Path
+
 # note you have to install this as pip3 install flask-session
 # UserGame, 
 # , Creator, Genre, Publisher, Language
@@ -14,6 +17,7 @@ import requests
 import json
 from forms import RegistrationForm, LoginForm, UserEditForm, ScoreNameForm
 from sqlalchemy.exc import IntegrityError
+from itertools import product
 
 API_BASE_URL = 'https://api.boardgameatlas.com/api/'
 # response = requests.get('https://api.boardgameatlas.com/api/game/prices?game_id=6FmFeux5xH&client_id=yApNU591Nc')
@@ -75,6 +79,7 @@ def do_logout():
 
 @app.route('/', methods=['GET'])
 def display_home():
+    """Display home page"""
     
     background_resp = requests.get(f'{API_BASE_URL}/game/images?limit=1&client_id={client_id}') 
     
@@ -82,15 +87,12 @@ def display_home():
 
     for result in background_data['images']:
         game_images_b = result['medium']
-    
-    # raise ValueError(game_images)
-    
-    
-    
+
     return render_template('index.html', game_images_b=game_images_b )
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
+    """Create a New User Page"""
     
     form = RegistrationForm()
     
@@ -103,12 +105,7 @@ def register_user():
             username = form.username.data,
             password = form.password.data
             )
-            # new_user = User.register(first_name, last_name, email, username, password)
-            # raise ValueError(user)
-        # raise ValueError(new_user)
-
-        # db.session.add(new_user)
-        # try:
+      
             db.session.commit()
         except IntegrityError:
             form.username.errors.append('Username taken. Please pick another')
@@ -132,6 +129,7 @@ def register_user():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
+    """Displa Login Page"""
     form = LoginForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -313,7 +311,673 @@ def api_search_games():
     
     return render_template('game_search.html', g_data=g_data)
     
-    # test = requests.get(f'{API_BASE_URL}/search?ids=vJkLBDgn1j&limit=10&client_id={client_id}')
+
+@app.route('/users/<game_id>/log_play', methods=['GET','POST'])
+def log_play_for_user(game_id): 
+    """Logs a play for user """
+    print('/users/<game_id>/log_play is running in app.py')
+    
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
+    
+    # form = ScoreNameForm()
+    # if form.validate_on_submit():
+    #     first_name = form.first_name.data
+    #     last_name = form.last_name.data
+    #     user_id = form.user_id.data
+    
+    # raise ValueError(game_id)
+    
+    response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
+    # this is returning one game 
+    
+    g_data = response.json()
+    # raise ValueError(g_data)
+
+    # min_players = [min_players['min_players'] for min_players in g_data['games']]
+    # raise ValueError(min_players)
+    # max_players = [max_players['max_players'] for max_players in g_data['games']]
+    min_players = g_data['games'][0]['min_players']
+    max_players = g_data['games'][0]['max_players']
+    name = g_data['games'][0]['name']
+    # raise ValueError(max_players)
+    
+    return render_template("log_play.html", min_players=min_players, max_players=max_players, name=name, game_id=game_id)
+
+@app.route('/log_play/<string:g_name>/<game_id>/name_entry', methods=['GET','POST'])
+def name_entry(g_name, game_id):
+    form_req = dict(request.form)
+    num_players = form_req['q']
+    # raise ValueError(num_players)
+    username = g.user.username
+    email = g.user.email
+
+    # session['num_players'] = num_players
+
+    return render_template('name_entry.html', num_players=num_players, g_name=g_name, username=username, email=email, game_id=game_id)
+
+@app.route('/log_play/<string:g_name>/<game_id>/score', methods=['GET','POST'])
+def keep_score(g_name, game_id): 
+    """Track the Score"""
+    # raise ValueError(name)
+    names_emails_dict = dict(request.form)
+    names_dict = dict(list(names_emails_dict.items())[::2])
+    emails_dict = dict(list(names_emails_dict.items())[1::2])
+    # raise ValueError(emails_dict)
+    emails_list = list(emails_dict.values())
+    names_list = list(names_dict.values())
+    players_ids_list = []
+
+    for email in emails_list: 
+        new_player = Player(email=email)
+        db.session.add(new_player)
+        try: 
+            db.session.commit()
+        except: 
+            db.session.rollback()
+            print('this player has already been added')
+            
+    for one_email in emails_list:
+        # raise ValueError(emails_list)
+        player = Player.query.filter_by(email=f"{one_email}").first()
+        player_id = player.id
+        
+        players_ids_list.append(player_id)
+        
+    # raise ValueError(players_ids_list)
+    session['players_ids_list'] = players_ids_list 
+            
+    for name in names_list: 
+        if name == '':
+            index = (names_list.index(''))
+            nemo = names_list[index]
+            player_num = (index + 1)
+            nemo = (f'Player {player_num}')
+            names_list[index] = nemo
+            
+            if index == 0:
+                names_list[0] = g.user.username
+                
+        # new_player = 
+    # NEED TO RETRIEVE THE SCORES FROM THE SCOREBOARD 
+    
+    names_list_json = json.dumps(names_list)
+    # grabbing names out of form
+    
+    return render_template('score.html', names_list_json=names_list_json, g_name=g_name, game_id=game_id)
+    # return render_template('score.html', names_list=names_list)
+
+
+# @app.route('/api/<game_id>/log_play', methods=['Get'])
+# def api_log_play(game_id):
+#     """API gets the game information to log play"""
+    
+#     response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
+#     raise ValueError(game_id)
+#     raise ValueError(response)
+#     game = response.json()
+    
+#       # all_min_players = [min_players['min_players'] for min_players in g_data['games']]
+#     # all_max_players = [max_players['max_players'] for max_players in g_data['games']]
+    
+#     return game
+    
+# @app.route('/results/score_data', methods=['POST']) 
+# def recieve_match_scores(): 
+#     score_data = request.data
+#     raise ValueError(score_data)
+
+#     return('this is the data')
+
+
+
+def check_if_greater_than_all(list_scores):
+    # raise ValueError('list_scores in check if greater than  all', list_scores)
+    list_scores.sort()
+    largest_num = list_scores.pop(); 
+    # raise ValueError(largest_num, all(largest_num > score for score in list_scores))
+    
+    return largest_num, all(largest_num > score for score in list_scores)
+        
+
+def false_if_not_greater_than_all(list_scores):
+    _list_scores = list_scores.copy()
+    greatest, is_greater_than_all = check_if_greater_than_all(_list_scores)
+    # print(map_greatest(list_scores, greatest, is_greater_than_all))
+    return map_greatest(list_scores, greatest, is_greater_than_all)
+
+def map_greatest(list_scores, greatest: int, is_greater_than_all):
+   
+    list_wins = [is_greater_than_all if score == greatest else False for score in list_scores]
+    finish_route(list_wins, list_scores)
+    
+def finish_route(list_wins, list_scores):
+    print('*************************************************')
+    print('how many times is this function running????')
+    print('*************************************************')
+
+    # raise ValueError(list_wins)
+    players_ids = session['players_ids_list']
+    # raise ValueError(players_ids)
+    # raise ValueError(players_ids)
+    # list_scores = session['list_scores']
+    # raise ValueError(list_scores)
+    match_id = session['match_id']
+    # raise ValueError(match_id)
+    # match = Match.query.get(match_id)
+    # raise ValueError(players_ids)
+    # raise ValueError(list_wins)
+    # session['list_wins'] = 'list_wins'
+        
+    # maybe could do something like 
+    # for x, y, z in itertools.product(list1, list2, list3):
+    
+    max_length = (max(len(players_ids), len(list_wins), len(list_scores)))
+    # raise ValueError('max length', max_length)
+    # raise ValueError('player_ids', players_ids)
+    for i in range(max_length):
+    # for player_id, win, score in (players_ids, list_wins, list_scores): 
+        # this is using itertools
+        # player = Player.query.get(players_ids[i])
+        # raise ValueError(player)
+   
+        # you need a win for match_player and a score 
+        new_match_player = match_player.insert().values(match_id=match_id, player_id=players_ids[i], win=list_wins[i], score=list_scores[i])
+        # raise ValueError(new_match_player)
+
+        # raise ValueError(player)
+        # player.matches.append(match)
+        # try:
+        #     db.session.execute(new_match_player)
+        #     db.session.commit()
+        #     return redirect('/match/results')
+            
+        # except IntegrityError:
+        #     pass
+        #     return redirect('/match/results')
+        db.session.execute(new_match_player)
+    db.session.commit()
+    return redirect('/match/results')
+   
+
+@app.route('/log_play/<game_id>/save/<names_list_json>/<scores>', methods=['GET', 'POST'])
+def save_results_in_table(game_id, names_list_json, scores): 
+    """Saves Results to match_player Table"""
+    # Note to self this is literally to save that information so you can retrieve it from the table in the next route.
+    
+    # raise ValueError(scores)
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
+    
+# Note THAT PASSING MY SCORES THROUGH THE URL IS NOT IDEAL I WOULD MUCH RATHER USE AXIOS.POST TO DO THIS. HOWVER, I CANT GET THAT TO FUNCTION SO I AM MOVING FORWARD UNTIL I CAN COME BACK TO IT
+    # raise ValueError(type(names_list_json))
+    # names_list = json.loads(names_list_json)
+    names_list = names_list_json
+    # raise ValueError(names_list)
+    num_players = len(names_list)
+    # raise ValueError(len(names_list))
+    user = User.query.get(g.user.id)
+    winStr = request.form['win']
+    win = json.loads(winStr.lower())
+    # raise ValueError(win)
+    
+    new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
+    # new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
+    db.session.add(new_match)
+    db.session.commit()
+    
+    match_id = new_match.id
+    # raise ValueError(match_id)
+    
+    session['match_id'] = match_id
+    
+    # match = Match.query.get(match_id)
+    # raise ValueError(match)
+    
+    string_scores = scores.split(',')
+    # raise ValueError(list_scores)
+    list_scores = []
+    # raise ValueError(list_scores)
+
+
+    for string_score in string_scores:
+        integer = int(string_score)
+        list_scores.append(integer)
+        
+    # raise ValueError(list_scores)
+    
+    matches_players = Player.query.join(match_player).join(Match).filter_by(id=match_id).all()
+    # raise ValueError(matches_players)
+    
+    # if(len(list_scores) == len(matches_players)):
+    #     return redirect('/match/results')
+    
+    # else:
+    #     false_if_not_greater_than_all(list_scores)
+    # check_if_greater_than_all(list_scores)
+    
+    false_if_not_greater_than_all(list_scores)
+
+    return redirect('/match/results')
+    # list_wins = []
+    # list wins will look something like [false, false, true, false]
+    # raise ValueError(list_scores)
+    # session['list_scores'] = 'list_scores'
+    
+
+
+    # *******************************************************************************************************************
+        # this=one will be closer to the truth in what you are actually using 
+        
+    # for player_id in players_ids: 
+    #     player = Player.query.get(player_id)
+    #     # you need a win for match_player and a score 
+    #     new_match_player = match_player.insert().values(match_id=match_id, player_id=player_id, win=True, score=4)
+    #     db.session.execute(new_match_player)
+        # note that this one is running and adding informtaion to my table which is why I am currenty keeping it
+        # try: 
+        #     db.session.execute(new_match_player)
+        #     db.session.commit()
+        #     print('the problem is not here')
+        # except: 
+        #     db.session.rollback()
+        #     return redirect('/match/results')
+    #     print('this mtach_player has already been added')
+        # raise ValueError('this mtach_player has already been added')
+    
+    # db.session.commit()
+    # this one was working 
+    # else:
+    # raise ValueError('this is the end')
+    
+    # raise ValueError(players_ids)
+    # session['match_id'] = match_id
+    # raise ValueError(match_id)
+    
+    # return redirect('/match/results')
+
+# list_scores = session['list_scores']
+
+# def check_if_greater_than_all(list_scores):
+#     # raise ValueError('list_scores in check if greater than  all', list_scores)
+#     list_scores.sort()
+#     largest_num = list_scores.pop(); 
+#     # raise ValueError(largest_num, all(largest_num > score for score in list_scores))
+    
+#     return largest_num, all(largest_num > score for score in list_scores)
+        
+# def map_greatest(list_scores, greatest: int, is_greater_than_all):
+   
+#     list_wins = [is_greater_than_all if score == greatest else False for score in list_scores]
+#     # raise ValueError(list_wins)
+#     session['list_wins'] = 'list_wins'
+#     return redirect('/add/player_match')
+#     # return [is_greater_than_all if score == greatest else False for score in list_scores]
+
+# def false_if_not_greater_than_all(list_scores):
+#     _list_scores = list_scores.copy()
+#     greatest, is_greater_than_all = check_if_greater_than_all(_list_scores)
+#     print(map_greatest(list_scores, greatest, is_greater_than_all))
+#     return map_greatest(list_scores, greatest, is_greater_than_all)
+
+
+# @app.route('/add/player_match', methods=['GET', 'POST'])
+# def add_result_to_player_match_table():
+    
+#         list_scores = session['list_scores']
+#         list_wins = session['list_list_wins']
+#         raise ValueError('list_wins in add_result_to_player_match', list_wins)
+    
+
+    
+    
+@app.route('/match/results', methods=['GET', 'POST'])
+def display_results():
+    """Display results"""
+    # raise ValueError('beginning of /match/results')
+    user = User.query.get(g.user.id)
+    
+    list_matches = user.matches
+    user_matches = [match.serialize() for match in Match.query.filter(Match.user_id == g.user.id)]
+    matches_json = json.dumps(user_matches)
+    list_game_ids = []
+    
+    
+    for match in list_matches: 
+        list_game_ids.append(match.game_id)
+    game_ids_no_dup = list(dict.fromkeys(list_game_ids))
+    game_ids_no_dup_json = json.dumps(game_ids_no_dup)
+    
+    session['game_ids'] = game_ids_no_dup
+    
+    return render_template('match_results.html', user=user, matches_json=matches_json, game_ids_no_dup_json=game_ids_no_dup_json)
+
+    
+@app.route('/api/results', methods=['GET'])
+def api_result_games():
+    """gets the games that have results"""
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
+    
+    game_ids = session['game_ids']
+    # raise ValueError('games:', games)
+    # gets game ids out of session for results 
+    # raise ValueError(game_ids)
+
+    string_ids = ','.join(game_ids)
+    # raise ValueError(string_ids)
+    
+    response = requests.get(f'{API_BASE_URL}/search?ids={string_ids}&client_id={client_id}')
+    games = response.json()
+    # raise ValueError(games)
+    
+    return games 
+
+@app.route('/game/results/<game_id>', methods=['GET'])
+def display_matches(game_id):
+    """Display Matches for each game""" 
+    
+    user_id = g.user.id
+    matches = Match.query.filter_by(user_id=user_id, game_id=game_id).all()
+    
+    # raise ValueError(matches)
+    match_id_list = []
+    for match in matches:
+        match_id = match.id
+        match_id_list.append(match_id)
+    # raise ValueError(match_list)
+
+    # query players by match id 
+    player_emails = []
+    for match_id in match_id_list:
+        matches_players = Player.query.join(match_player).join(Match).filter_by(id=match_id).all()
+        # matches_players = match_player.query.filter_by(match_id=match_id).all()
+        raise ValueError(matches_players)
+    
+    
+    # the items you want to pass  to the html are 
+    # match number players name and email?  and 
+    # and then score of each player
+    
+    for player in matches_players:
+        player_emails.append()
+    
+        
+        
+    
+        
+        # for the players for the matches you need the players from the matches that you have above 
+    
+    # note that yoy have to figue out how to query the table match_players by the user id and the game_id for this one 
+    # the game id is  not the match id but you do need to use the match id so that is not bad
+    
+
+    players = match_player.filter_by(match_id=match_id).all()
+    raise ValueError(players)
+    
+    return render_template('game_results_details.html', game_id=game_id)
+
+    
+
+@app.route('/games/<game_id>/add', methods=['GET', 'POST'])
+def add_game_to_user(game_id): 
+    """Adds Game to User Games"""
+    # user = g.user
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
+    
+    new_game = Game(id=game_id) 
+    # raise ValueError(new_game)
+    db.session.add(new_game)
+    
+    user = User.query.get(g.user.id)
+    
+    try: 
+        user.games.append(new_game)
+
+    except IntegrityError:
+        db.session.rollback()
+        game = Game.query.get(game_id)
+        user.games.append(game)
+        
+    db.session.commit()
+    
+    return redirect('/users/games')
+
+@app.route('/games', methods=['GET'])
+def display_game():
+    """Display Games"""
+    
+    return render_template('games.html')
+        
+@app.route('/api/games', methods=['GET'])
+def api_games():
+    """API Get Games"""
+    response = requests.get(f'{API_BASE_URL}/search?limit=100&client_id={client_id}')
+    games = response.json()
+    
+    return games 
+
+@app.route('/games/<game_id>/delete', methods=['GET', 'POST'])
+def delete_users_game(game_id): 
+    """Delete's Users Game"""
+    user = User.query.get(g.user.id)
+    game = Game.query.get(game_id)
+    # raise ValueError(game)
+    user.games.remove(game)
+    db.session.commit()
+    
+    return redirect('/users/games')
+
+@app.route('/games/<game_id>', methods=['GET'])
+def display_game_details(game_id): 
+    """Display Game Details"""
+
+    return render_template('game_details.html', game_id=game_id)
+
+@app.route('/api/games/<game_id>', methods=['GET'])
+def api_game(game_id):  
+    """API Get Game"""
+    
+    response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
+
+    game = response.json()
+
+    return game
+
+
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+# from the youtube video 
+
+
+
+# ************************************************************************************************************
+# NOTES NOTES NOTES NOTES NOTES NOTES NOTES NOTES NOTES NOTES NOTES NOTES NOTES NOTES NOTES NOTES NOTES 
+# ************************************************************************************************************
+
+
+
+# ************************************************************************************************************
+# DESIGN NOTES DESIGN NOTES DESIGN NOTES DESIGN NOTES DESIGN NOTES DESIGN NOTES DESIGN NOTES DESIGN NOTES DESIGN NOTES
+# ************************************************************************************************************
+
+# After you click on the results you will be show wins losses and total plays.... After that you can click on the inididual game this will then show you the matches that you have played with that game directly. I would like to be able to make it so each of the matches is then able to be clicked on and and it will show the details of that match... I.E. players, scores, and who won. A nice touch would also be a date and time stamp. From there it would be awesome if you could click on a player who you have played and it would take you to the total of that players stats. 
+
+
+
+
+# so this is actually giving us the data that we want to use, I dont think you need what you have in models.py
+    
+    # ***********************************************************
+    # this is in @app.route('/api/games', methods=['GET'])
+    
+     # raise ValueError(games)
+    # games = { 
+    # "names": "[game_name['name'] for game_name in g_data['games']]"
+    # }
+    
+    # raise ValueError(games_data)
+    
+    # games = [response.serialize() for game in games_data]
+    # note that this is retrieving the games from the table and we dont have any games in there so you need to figure out how to retrieve the games from the API 
+    # return render_template('games.html', games=games)
+    
+    # THIS IS WHAT WAS DISPLAYING BEFORE 
+    # search = request.args.get('q') 
+    # # this is search by name
+    
+    # games = requests.get(f'{API_BASE_URL}/search?name={search}&limit=30&client_id={client_id}')
+    
+    # g_data = games.json()
+    
+    # names = [game_name['name'] for game_name in g_data['games']]
+    # # this is looping through and grabbing each name in the list 
+    # # raise ValueError(games_name)
+    # all_min_players = [min_players['min_players'] for min_players in g_data['games']]
+    # all_max_players = [max_players['max_players'] for max_players in g_data['games']]
+    # images = [image['images']['medium'] for image in g_data['games']]
+    # descriptions = [description['description'] for description in g_data['games']]
+
+    # ************************************************************************
+    
+    # ****************************************************************
+    # THIS IS WHAT WAS DISPLAYING BEFORE 
+    # return render_template('games.html', images=images, names=names, all_min_players=all_min_players, all_max_players=all_max_players, descriptions=descriptions)
+
+    # *****************************************************************
+    # @app.route('/match/results', methods=['GET', 'POST'])
+    # *****************************************************************
+       # raise ValueError(game_ids_no_dup)
+    # need to save this list in session to grab in additional route that will return the games --> then you can grab the name and pic from that game 
+    
+    # game id, user_id, win/lose 
+    # raise ValueError(user.matches)
+    
+    # what you want to display is the name of the game number of times played win or loss and num of players 
+    # could later add in date and other players etc... 
+    
+    # name of the game 
+        # you can get this through the id making an api call 
+    
+    #num times game is played     
+        #num times played will be from that user id how many matches with that game id 
+        
+    #num times win for a particular game 
+        #num wins for that game num times game is played with num wins
+        
+    #num times loss for a particular game 
+        #num losses for that game num times game is played with num wins
+    
+    # return render_template('match_results.html', user=user)
+    # return redirect('/api/results')
+
+# # ************************************************************************************************************
+# @app.route('/log_play/<game_id>/save/<names_list_json>/<scores>', methods=['GET', 'POST'])
+# ************************************************************************************************************
+ # score_data = request.data
+    # string_val = score_data.decode('utf-8')
+    # raise ValueError('string_val', string_val)
+    # raise ValueError('score_data', score_data)
+    
+    # content_type = request.headers['Content-Type']
+    # content_length = request.headers['Content-Length']
+    # # content_body = request.body
+
+    # if content_type is None:
+    #     print('***********************************************')
+    #     print('The Content-Type header is not set.')
+    #     print('***********************************************')
+    #     # raise ValueError('content type is none')
+    # else:
+    #     print('***********************************************')
+    #     print('The Content-Type header is set to:', content_type)
+    #     print('***********************************************')
+    #     # raise ValueError('content type is set to something', content_type)
+    # # raise ValueError('content length', content_length)
+    # # raise ValueError('body', content_body)
+    
+    # try:
+    #     s = score_data.decode('utf-8')
+    # except UnicodeDecodeError:
+    #     print('The byte data could not be decoded.')
+    # else:
+    #     print(s)
+    
+    # arr = bytes(score_data)
+    # s = arr.decode('utf-8')
+    # score_data = request.get_json()
+    # NEED TO GET THE SCORE DATA FROM THE SCORE.JS SO THAT YOU CAN CREATE A NEW MATCH_PLAYER IN TABLE
+    # score_data = json.loads(request.data)
+    # raise ValueError(s)
+    # raise ValueError(arr)
+    # raise ValueError(score_data)
+    # raise ValueError(type(score_data))
+
+
+# ************************************************************************************************************
+# @app.route('/log_play/<string:g_name>/<game_id>/score', methods=['GET','POST'])
+# ************************************************************************************************************
+    
+    # if 'num_players' in session:
+    #     print('num_players is in session')
+        # raise ValueError('num_player is in session')
+        #this is currently running can I access this in javascript?  
+        
+    # raise  ValueError(names_list)
+    # raise ValueError(len(form_req))
+    # raise ValueError(form_req)
+    
+    # for i in range(1, len(form_req)):
+        # player[i] = form_req[f'player{i}_name']
+    
+        # console.log(player1)
+    
+    # player2 = form_req['player2_name']
+    # raise ValueError(player2)
+    # form = ScoreNameForm()
+    
+    # for key, value in form_req.items():
+    #     raise ValueError(key, value)
+    
+    # for k, v in form_req.items():
+    #     if player[0] == v[0]:
+    #         print(k, v)
+    
+    # locals().update(form_req)
+    
+    # print(player1) 
+    
+    # for key,val in form_req.items():
+    #     exec(key + '=val')
+        
+    # raise ValueError(form_req)
+    
+    # if form.validate_on_submit():
+    #     first_name = form.first_name.data
+    #     last_name = form.last_name.data
+    #     user_id = form.user_id.data
+    
+    # session['names_list'] = names_list
+    # session.add(names_list)
+    # session.commit()
+    
+    # session['num'] = 42
+    # session.add(names_list)
+    # session.commit()
+
+    # raise ValueError(session['names_list'])  
+
+
+# ************************************************************************************************************
+# BEGINNING NOTES 
+# ************************************************************************************************************
+        # test = requests.get(f'{API_BASE_URL}/search?ids=vJkLBDgn1j&limit=10&client_id={client_id}')
     
   
     # g_data = test.json()
@@ -411,352 +1075,128 @@ def api_search_games():
 
 # *******************************************************************************************
 
-@app.route('/users/<game_id>/log_play', methods=['GET','POST'])
-def log_play_for_user(game_id): 
-    """Logs a play for user """
-    print('/users/<game_id>/log_play is running in app.py')
-    
-    if not g.user:
-        flash("Please make an account to use this feature.", "danger")
-        return redirect("/")
-    
-    # form = ScoreNameForm()
-    # if form.validate_on_submit():
-    #     first_name = form.first_name.data
-    #     last_name = form.last_name.data
-    #     user_id = form.user_id.data
-    
-    # raise ValueError(game_id)
-    
-    response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
-    # this is returning one game 
-    
-    g_data = response.json()
-    # raise ValueError(g_data)
+# ************************************************************************************************************
+# working on 6/27/2023
 
-    # min_players = [min_players['min_players'] for min_players in g_data['games']]
-    # raise ValueError(min_players)
-    # max_players = [max_players['max_players'] for max_players in g_data['games']]
-    min_players = g_data['games'][0]['min_players']
-    max_players = g_data['games'][0]['max_players']
-    name = g_data['games'][0]['name']
-    # raise ValueError(max_players)
+# @app.route('/log_play/<game_id>/save/<names_list_json>/<scores>', methods=['GET', 'POST'])
+# def save_results_in_table(game_id, names_list_json, scores): 
+#     """Saves Results to match_player Table"""
+#     # Note to self this is literally to save that information so you can retrieve it from the table in the next route.
     
-    return render_template("log_play.html", min_players=min_players, max_players=max_players, name=name, game_id=game_id)
-
-@app.route('/log_play/<string:g_name>/<game_id>/name_entry', methods=['GET','POST'])
-def name_entry(g_name, game_id):
-    form_req = dict(request.form)
-    num_players = form_req['q']
-    username = g.user.username
-
-    # session['num_players'] = num_players
-
-    return render_template('name_entry.html', num_players=num_players, g_name=g_name, username=username, game_id=game_id)
-
-@app.route('/log_play/<string:g_name>/<game_id>/score', methods=['GET','POST'])
-def keep_score(g_name, game_id): 
-    """Track the Score"""
-    # raise ValueError(name)
-    names_dict = dict(request.form)
+#     # raise ValueError(scores)
+#     if not g.user:
+#         flash("Please make an account to use this feature.", "danger")
+#         return redirect("/")
     
-    # if val in names_dict.value == None: 
-    #     val = Player(names_dict.index('val'))
+# # Note THAT PASSING MY SCORES THROUGH THE URL IS NOT IDEAL I WOULD MUCH RATHER USE AXIOS.POST TO DO THIS. HOWVER, I CANT GET THAT TO FUNCTION SO I AM MOVING FORWARD UNTIL I CAN COME BACK TO IT
+#     # raise ValueError(type(names_list_json))
+#     # names_list = json.loads(names_list_json)
+#     names_list = names_list_json
+#     # raise ValueError(names_list)
+#     num_players = len(names_list)
+#     # raise ValueError(len(names_list))
+#     user = User.query.get(g.user.id)
+#     winStr = request.form['win']
+#     win = json.loads(winStr.lower())
+#     # raise ValueError(win)
     
-    names_list = list(names_dict.values())
-    # raise ValueError(names_list)
-    # if '' in names_list: 
-    for name in names_list: 
-        if name == '':
-            index = (names_list.index(''))
-            nemo = names_list[index]
-            player_num = (index + 1)
-            nemo = (f'Player {player_num}')
-            names_list[index] = nemo
+#     new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
+#     # new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
+#     db.session.add(new_match)
+#     db.session.commit()
+    
+#     match_id = new_match.id
+#     # raise ValueError(match_id)
+    
+#     session['match_id'] = match_id
+    
+#     # match = Match.query.get(match_id)
+#     # raise ValueError(match)
+    
+#     string_scores = scores.split(',')
+#     # raise ValueError(list_scores)
+#     list_scores = []
+#     # raise ValueError(list_scores)
+
+
+#     for string_score in string_scores:
+#         integer = int(string_score)
+#         list_scores.append(integer)
+        
+#     # raise ValueError(list_scores)
+    
+#     matches_players = Player.query.join(match_player).join(Match).filter_by(id=match_id).all()
+#     raise ValueError(matches_players)
+    
+#     # if len(list_scores = len())
+#     # check_if_greater_than_all(list_scores)
+#     false_if_not_greater_than_all(list_scores)
+
+#     # list_wins = []
+#     # list wins will look something like [false, false, true, false]
+#     # raise ValueError(list_scores)
+#     # session['list_scores'] = 'list_scores'
+    
+# def check_if_greater_than_all(list_scores):
+#     # raise ValueError('list_scores in check if greater than  all', list_scores)
+#     list_scores.sort()
+#     largest_num = list_scores.pop(); 
+#     # raise ValueError(largest_num, all(largest_num > score for score in list_scores))
+    
+#     return largest_num, all(largest_num > score for score in list_scores)
+        
+
+# def false_if_not_greater_than_all(list_scores):
+#     _list_scores = list_scores.copy()
+#     greatest, is_greater_than_all = check_if_greater_than_all(_list_scores)
+#     print(map_greatest(list_scores, greatest, is_greater_than_all))
+#     return map_greatest(list_scores, greatest, is_greater_than_all)
+
+# def map_greatest(list_scores, greatest: int, is_greater_than_all):
+   
+#     list_wins = [is_greater_than_all if score == greatest else False for score in list_scores]
+#     finish_route(list_wins, list_scores)
+    
+# def finish_route(list_wins, list_scores):
+#     print('*************************************************')
+#     print('how many times is this function running????')
+#     print('*************************************************')
+
+#     # raise ValueError(list_wins)
+#     players_ids = session['players_ids_list']
+#     # raise ValueError(players_ids)
+#     # raise ValueError(players_ids)
+#     # list_scores = session['list_scores']
+#     # raise ValueError(list_scores)
+#     match_id = session['match_id']
+#     # raise ValueError(match_id)
+#     # match = Match.query.get(match_id)
+#     # raise ValueError(players_ids)
+#     # raise ValueError(list_wins)
+#     # session['list_wins'] = 'list_wins'
+        
+#     # maybe could do something like 
+#     # for x, y, z in itertools.product(list1, list2, list3):
+    
+#     max_length = (max(len(players_ids), len(list_wins), len(list_scores)))
+    
+#     for i in range(max_length):
+#     # for player_id, win, score in (players_ids, list_wins, list_scores): 
+#         # this is using itertools
+#         # player = Player.query.get(players_ids[i])
+#         # raise ValueError(player)
+#         # you need a win for match_player and a score 
+#         new_match_player = match_player.insert().values(match_id=match_id, player_id=players_ids[i], win=list_wins[i], score=list_scores[i])
+#         # raise ValueError(new_match_player)
+
+#         # raise ValueError(player)
+#         # player.matches.append(match)
+#         try:
+#             db.session.execute(new_match_player)
+#             db.session.commit()
+#             return redirect('/match/results')
             
-            if index == 0:
-                names_list[0] = g.user.username
-                
-    names_list_json = json.dumps(names_list)
-    # grabbing names out of form
-    
-    
-    # if 'num_players' in session:
-    #     print('num_players is in session')
-        # raise ValueError('num_player is in session')
-        #this is currently running can I access this in javascript?  
-        
-    # raise  ValueError(names_list)
-    # raise ValueError(len(form_req))
-    # raise ValueError(form_req)
-    
-    # for i in range(1, len(form_req)):
-        # player[i] = form_req[f'player{i}_name']
-    
-        # console.log(player1)
-    
-    # player2 = form_req['player2_name']
-    # raise ValueError(player2)
-    # form = ScoreNameForm()
-    
-    # for key, value in form_req.items():
-    #     raise ValueError(key, value)
-    
-    # for k, v in form_req.items():
-    #     if player[0] == v[0]:
-    #         print(k, v)
-    
-    # locals().update(form_req)
-    
-    # print(player1) 
-    
-    # for key,val in form_req.items():
-    #     exec(key + '=val')
-        
-    # raise ValueError(form_req)
-    
-    # if form.validate_on_submit():
-    #     first_name = form.first_name.data
-    #     last_name = form.last_name.data
-    #     user_id = form.user_id.data
-    
-    # session['names_list'] = names_list
-    # session.add(names_list)
-    # session.commit()
-    
-    # session['num'] = 42
-    # session.add(names_list)
-    # session.commit()
-
-    # raise ValueError(session['names_list'])  
-
-    return render_template('score.html', names_list_json=names_list_json, g_name=g_name, game_id=game_id)
-    # return render_template('score.html', names_list=names_list)
-
-
-# @app.route('/api/<game_id>/log_play', methods=['Get'])
-# def api_log_play(game_id):
-#     """API gets the game information to log play"""
-    
-#     response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
-#     raise ValueError(game_id)
-#     raise ValueError(response)
-#     game = response.json()
-    
-#       # all_min_players = [min_players['min_players'] for min_players in g_data['games']]
-#     # all_max_players = [max_players['max_players'] for max_players in g_data['games']]
-    
-#     return game
-    
-@app.route('/log_play/<game_id>/save/<names_list_json>', methods=['GET', 'POST'])
-def save_results(game_id, names_list_json): 
-    """Saves Results to Table"""
-    if not g.user:
-        flash("Please make an account to use this feature.", "danger")
-        return redirect("/")
-    
-    names_list = json.loads(names_list_json)
-    num_players = len(names_list)
-    # raise ValueError(len(names_list))
-    user = User.query.get(g.user.id)
-    winStr = request.form['win']
-    win = json.loads(winStr.lower())
-    # raise ValueError(win)
-    new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
-    # new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
-    db.session.add(new_match)
-    db.session.commit()
-    
-    # list_matches = user.matches
-    # user_matches = [match.serialize() for match in Match.query.filter(Match.user_id == g.user.id)]
-    # matches_json = json.dumps(user_matches)
-    # list_game_ids = []
-    
-    # for match in list_matches: 
-    #     list_game_ids.append(match.game_id)
-    # game_ids_no_dup = list(dict.fromkeys(list_game_ids))
-    # game_ids_no_dup_json = json.dumps(game_ids_no_dup)
-    
-    # session['game_ids'] = game_ids_no_dup
-
-    # return render_template('match_results.html', user=user, matches_json=matches_json, game_ids_no_dup_json=game_ids_no_dup_json)
-    return redirect('/match/results')
-    
-    
-@app.route('/match/results', methods=['GET', 'POST'])
-def display_results():
-    """Display results"""
-    
-    user = User.query.get(g.user.id)
-    
-    list_matches = user.matches
-    user_matches = [match.serialize() for match in Match.query.filter(Match.user_id == g.user.id)]
-    matches_json = json.dumps(user_matches)
-    list_game_ids = []
-    
-    for match in list_matches: 
-        list_game_ids.append(match.game_id)
-    game_ids_no_dup = list(dict.fromkeys(list_game_ids))
-    game_ids_no_dup_json = json.dumps(game_ids_no_dup)
-    
-    session['game_ids'] = game_ids_no_dup
-    
-    return render_template('match_results.html', user=user, matches_json=matches_json, game_ids_no_dup_json=game_ids_no_dup_json)
-    # return('hello')
-
-    # raise ValueError(game_ids_no_dup)
-# need to save this list in session to grab in additional route that will return the games --> then you can grab the name and pic from that game 
-    
-    # game id, user_id, win/lose 
-    # raise ValueError(user.matches)
-    
-    # what you want to display is the name of the game number of times played win or loss and num of players 
-    # could later add in date and other players etc... 
-    
-    # name of the game 
-        # you can get this through the id making an api call 
-    
-    #num times game is played     
-        #num times played will be from that user id how many matches with that game id 
-        
-    #num times win for a particular game 
-        #num wins for that game num times game is played with num wins
-        
-    #num times loss for a particular game 
-        #num losses for that game num times game is played with num wins
-    
-    # return render_template('match_results.html', user=user)
-    # return redirect('/api/results')
-
-@app.route('/api/results', methods=['GET'])
-def api_result_games():
-    """gets the games that have results"""
-    if not g.user:
-        flash("Please make an account to use this feature.", "danger")
-        return redirect("/")
-    
-    game_ids = session['game_ids']
-    # raise ValueError('games:', games)
-    # gets game ids out of session for results 
-    # raise ValueError(game_ids)
-
-    string_ids = ','.join(game_ids)
-    # raise ValueError(string_ids)
-    
-    response = requests.get(f'{API_BASE_URL}/search?ids={string_ids}&client_id={client_id}')
-
-    games = response.json()
-    
-    # raise ValueError(games)
-    
-    return games 
-    
-
-@app.route('/games/<game_id>/add', methods=['GET', 'POST'])
-def add_game_to_user(game_id): 
-    """Adds Game to User Games"""
-    # user = g.user
-    if not g.user:
-        flash("Please make an account to use this feature.", "danger")
-        return redirect("/")
-    
-    new_game = Game(id=game_id) 
-    # raise ValueError(new_game)
-    db.session.add(new_game)
-    
-    user = User.query.get(g.user.id)
-    
-    try: 
-        user.games.append(new_game)
-
-    
-    except IntegrityError:
-        db.session.rollback()
-        game = Game.query.get(game_id)
-        user.games.append(game)
-        
-    db.session.commit()
-    
-    return redirect('/users/games')
-
-@app.route('/games', methods=['GET'])
-def display_game():
-    """Display Games"""
-    
-    return render_template('games.html')
-        
-@app.route('/api/games', methods=['GET'])
-def api_games():
-    """API Get Games"""
-    response = requests.get(f'{API_BASE_URL}/search?limit=100&client_id={client_id}')
-    games = response.json()
-    
-    # raise ValueError(games)
-    # games = { 
-    # "names": "[game_name['name'] for game_name in g_data['games']]"
-    # }
-    
-    # raise ValueError(games_data)
-    
-    # games = [response.serialize() for game in games_data]
-    # note that this is retrieving the games from the table and we dont have any games in there so you need to figure out how to retrieve the games from the API 
-    # return render_template('games.html', games=games)
-    return games 
-# so this is actually giving us the data that we want to use, I dont think you need what you have in models.py
-    
-    # ***********************************************************
-    # THIS IS WHAT WAS DISPLAYING BEFORE 
-    # search = request.args.get('q') 
-    # # this is search by name
-    
-    # games = requests.get(f'{API_BASE_URL}/search?name={search}&limit=30&client_id={client_id}')
-    
-    # g_data = games.json()
-    
-    # names = [game_name['name'] for game_name in g_data['games']]
-    # # this is looping through and grabbing each name in the list 
-    # # raise ValueError(games_name)
-    # all_min_players = [min_players['min_players'] for min_players in g_data['games']]
-    # all_max_players = [max_players['max_players'] for max_players in g_data['games']]
-    # images = [image['images']['medium'] for image in g_data['games']]
-    # descriptions = [description['description'] for description in g_data['games']]
-
-    # ************************************************************************
-    
-    # ****************************************************************
-    # THIS IS WHAT WAS DISPLAYING BEFORE 
-    # return render_template('games.html', images=images, names=names, all_min_players=all_min_players, all_max_players=all_max_players, descriptions=descriptions)
-
-    # *****************************************************************
-    
-@app.route('/games/<game_id>/delete', methods=['GET', 'POST'])
-def delete_users_game(game_id): 
-    """Delete's Users Game"""
-    user = User.query.get(g.user.id)
-    game = Game.query.get(game_id)
-    # raise ValueError(game)
-    user.games.remove(game)
-    db.session.commit()
-    
-    return redirect('/users/games')
-
-@app.route('/games/<game_id>', methods=['GET'])
-def display_game_details(game_id): 
-    """Display Game Details"""
-
-    return render_template('game_details.html', game_id=game_id)
-
-@app.route('/api/games/<game_id>', methods=['GET'])
-def api_game(game_id):  
-    """API Get Game"""
-    
-    response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
-
-    game = response.json()
-
-    return game
-
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-# from the youtube video 
+#         except IntegrityError:
+#             pass
+#             return redirect('/match/results')
+#     return redirect('/match/results')
