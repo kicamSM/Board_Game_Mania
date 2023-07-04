@@ -1,23 +1,24 @@
 """Board Game Mania"""
 
 import warnings
-from flask import Flask, render_template, request, jsonify, flash, session, redirect, g, url_for
+import collections
+from flask import Flask, render_template, request, jsonify, flash, session, redirect, g
 
 from models import db, connect_db, User, Game, Match, Player, match_player
-# from axios import axios
 from flask_session import Session
-
-from pathlib import Path
-
-# note you have to install this as pip3 install flask-session
-# UserGame, 
-# , Creator, Genre, Publisher, Language
-# from board_game_mania import GameClass 
+import datetime
 import requests
 import json
-from forms import RegistrationForm, LoginForm, UserEditForm, ScoreNameForm
+from forms import RegistrationForm, LoginForm, UserEditForm 
 from sqlalchemy.exc import IntegrityError
-from itertools import product
+
+from sqlalchemy import create_engine
+
+engine = create_engine("postgresql:///board_game_db")
+
+
+from sqlalchemy.orm import sessionmaker
+SQLSessionMaker = sessionmaker(bind = engine)
 
 API_BASE_URL = 'https://api.boardgameatlas.com/api/'
 # response = requests.get('https://api.boardgameatlas.com/api/game/prices?game_id=6FmFeux5xH&client_id=yApNU591Nc')
@@ -30,7 +31,6 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///board_game_db'
-
 
 app.config['SQLALCHEMY_ECHO'] = True
 
@@ -60,7 +60,7 @@ connect_db(app)
 def add_user_to_g():
     
     if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
+        g.user = User.query.get_or_404(session[CURR_USER_KEY])
         
     else:
         g.user = None
@@ -75,7 +75,12 @@ def do_logout():
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
-    
+        
+@app.errorhandler(404)
+def page_not_found(e):
+    """404 NOT FOUND page."""
+
+    return render_template('404.html'), 404
 
 @app.route('/', methods=['GET'])
 def display_home():
@@ -107,6 +112,7 @@ def register_user():
             )
       
             db.session.commit()
+            
         except IntegrityError:
             form.username.errors.append('Username taken. Please pick another')
             flash("Username already taken", 'danger')
@@ -122,7 +128,7 @@ def register_user():
     # raise ValueError(g.user)
     # return redirect(f"/users/{g.user.id}", form=form)
     else: 
-        flash("The form did not validate", 'danger')
+        # flash("The form did not validate", 'danger')
         return render_template('register.html', form=form)
 # this is the one we are redirecting to for whatever reason g.user.id is not currecntly working so need to troubleshoot that. 
 
@@ -220,7 +226,7 @@ def api_users_games():
         flash("Please make an account to use this feature.", "danger")
         return redirect("/")
     
-    user = User.query.get(g.user.id)
+    user = User.query.get_or_404(g.user.id)
     # raise ValueError(user)
 
     list_of_games = user.games
@@ -246,9 +252,6 @@ def api_users_games():
     # raise ValueError(response)
     games = response.json()
     # raise ValueError(games)
-    
-    # this function you need to adjust so that it is the users games and not every users games is the same. 
-    # You will need to adjust your schema so that it is not returning all games but it is returning all games associated with that user. Will need an additional table 
     
     return games 
 
@@ -514,16 +517,17 @@ def save_results_in_table(game_id, names_list_json, scores):
 # Note THAT PASSING MY SCORES THROUGH THE URL IS NOT IDEAL I WOULD MUCH RATHER USE AXIOS.POST TO DO THIS. HOWVER, I CANT GET THAT TO FUNCTION SO I AM MOVING FORWARD UNTIL I CAN COME BACK TO IT
     # raise ValueError(type(names_list_json))
     # names_list = json.loads(names_list_json)
-    names_list = names_list_json
+    # names_list = names_list_json
     # raise ValueError(names_list)
-    num_players = len(names_list)
+    # num_players = len(names_list)
     # raise ValueError(len(names_list))
-    user = User.query.get(g.user.id)
+    user = User.query.get_or_404(g.user.id)
     winStr = request.form['win']
     win = json.loads(winStr.lower())
     # raise ValueError(win)
     
-    new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
+    new_match = Match(game_id=game_id, user_id=g.user.id, win=win)
+    # new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
     # new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
     db.session.add(new_match)
     db.session.commit()
@@ -637,7 +641,7 @@ def save_results_in_table(game_id, names_list_json, scores):
 def display_results():
     """Display results"""
     # raise ValueError('beginning of /match/results')
-    user = User.query.get(g.user.id)
+    user = User.query.get_or_404(g.user.id)
     
     list_matches = user.matches
     user_matches = [match.serialize() for match in Match.query.filter(Match.user_id == g.user.id)]
@@ -676,49 +680,135 @@ def api_result_games():
     
     return games 
 
+def convert_to_dict(data):
+  """Converts the given data into a dictionary."""
+#   result = collections.defaultdict(list)
+  result = {}
+  for row in data:
+        email = row[0]
+        match_id = row[1]
+        # player_id = row[2]
+        win = row[3]
+        score = row[4]
+    
+        
+        
+        # result.setdefault(match_id, {})
+        # result[match_id] = {
+        result = {
+            'match_id': match_id, 
+            'email': email, 
+            'score': score,
+            'win': win
+    # for item in row:
+    #   result[0].append({
+    #       'email': item[0],
+    #       'match_id': item[1],
+    #       'player_id': item[2],
+    #       'win': item[3],
+    #       'score': item[4]
+      }
+  return result
+
+# def get_year_month_day(timestamp):
+#   """Gets the year, month, and day from a timestamp."""
+# #   date = datetime.datetime.fromtimestamp(timestamp)
+#   year = timestamp.year
+# #   raise ValueError(year)
+
+#   return date.year, date.month, date.day
+
+def convert_list_to_date(date_list):
+  """Converts a list of integers representing the year, month, and day into a string representing the date in the format mm/dd/yyyy."""
+#   raise ValueError(date_list)
+  year = date_list[0]
+  month = date_list[1]
+  day = date_list[2]
+  date = datetime.datetime(year, month, day)
+#   raise ValueError(date)
+  this_date = date.strftime("%m/%d/%Y")
+#   raise ValueError(this_date)
+  return this_date
+
 @app.route('/game/results/<game_id>', methods=['GET'])
 def display_matches(game_id):
-    """Display Matches for each game""" 
-    
+    """Display Matches for each game"""  
     user_id = g.user.id
     matches = Match.query.filter_by(user_id=user_id, game_id=game_id).all()
+    match_ids = []
+    timestamps = []
     
-    # raise ValueError(matches)
-    match_id_list = []
+   
+    
+
     for match in matches:
+        date_list = []
         match_id = match.id
-        match_id_list.append(match_id)
-    # raise ValueError(match_list)
+        # timestamp = match.timestamp.date
+        timestamp = match.timestamp
+        year = timestamp.year
+        month = timestamp.month 
+        day = timestamp.day
+       
+        date_list.append(year)
+        date_list.append(month)
+        date_list.append(day)
+        
+        date = convert_list_to_date(date_list)
+        
+        # raise ValueError('date', date)
+        # raise ValueError(year)
+        # raise ValueError('type ts', type(timestamp))
+        # date = get_year_month_day(timestamp)
+        # raise ValueError(date)
+        # raise ValueError(type(timestamp))
+        match_ids.append(match_id)
+        # timestamps.append(str(timestamp))
+        timestamps.append(date)
+    
+    # raise ValueError(match_ids)
+    # raise ValueError(type(timestamps))
+    all_matches_data = []
 
-    # query players by match id 
-    player_emails = []
-    for match_id in match_id_list:
-        matches_players = Player.query.join(match_player).join(Match).filter_by(id=match_id).all()
-        # matches_players = match_player.query.filter_by(match_id=match_id).all()
-        raise ValueError(matches_players)
-    
-    
-    # the items you want to pass  to the html are 
-    # match number players name and email?  and 
-    # and then score of each player
-    
-    for player in matches_players:
-        player_emails.append()
-    
-        
-        
-    
-        
-        # for the players for the matches you need the players from the matches that you have above 
-    
-    # note that yoy have to figue out how to query the table match_players by the user id and the game_id for this one 
-    # the game id is  not the match id but you do need to use the match id so that is not bad
-    
+    sql_session = SQLSessionMaker()
 
-    players = match_player.filter_by(match_id=match_id).all()
-    raise ValueError(players)
+    for match_id in match_ids:
+        # match_data = []
+        
+        # dates = Match.query.get(match_id)
+        # raise ValueError(dates)
+        # note need to get dates out and then you can replace the match id with THAT
+
+        query = sql_session.query(
+            Player.email, 
+            match_player
+        )
+        match_players = query.join(match_player, Player.id == match_player.c.player_id).filter(match_player.c.match_id == match_id).all()
+        list_matches = []
+        
+        for tuple_data in match_players:
+            list_matches.append([item for item in tuple_data])
+        # raise ValueError(list_matches)
+
+            list_matches_dict = convert_to_dict(list_matches)  
+            # match_data.append(list_matches)
+            # raise ValueError(list_matches_dict)
+            # match_data.update(list_matches_dict)
+            # match_data.append(list_matches_dict)
+            # all_matches_data.append(match_data)
+            all_matches_data.append(list_matches_dict)
     
-    return render_template('game_results_details.html', game_id=game_id)
+    # raise ValueError(all_matches_data)
+    # raise ValueError(match_data)
+    match_id_list = json.dumps(match_ids)
+    # match_data_list = match_data.to_dict()
+    # match_data_list_json = json.dumps(match_data)
+    match_data_list_json = json.dumps(all_matches_data)
+    timestamps_json = json.dumps(timestamps)
+    # raise ValueError(type(timestamps_json))
+    # raise ValueError(match_data)
+    
+    return render_template('game_results_details.html', _game_id=game_id, match_id_list=match_id_list, match_data_list_json=match_data_list_json, timestamps_json=timestamps_json)
 
     
 
@@ -734,14 +824,14 @@ def add_game_to_user(game_id):
     # raise ValueError(new_game)
     db.session.add(new_game)
     
-    user = User.query.get(g.user.id)
+    user = User.query.get_or_404(g.user.id)
     
     try: 
         user.games.append(new_game)
 
     except IntegrityError:
         db.session.rollback()
-        game = Game.query.get(game_id)
+        game = Game.query.get_or_404(game_id)
         user.games.append(game)
         
     db.session.commit()
@@ -765,8 +855,8 @@ def api_games():
 @app.route('/games/<game_id>/delete', methods=['GET', 'POST'])
 def delete_users_game(game_id): 
     """Delete's Users Game"""
-    user = User.query.get(g.user.id)
-    game = Game.query.get(game_id)
+    user = User.query.get_or_404(g.user.id)
+    game = Game.query.get_or_404(game_id)
     # raise ValueError(game)
     user.games.remove(game)
     db.session.commit()

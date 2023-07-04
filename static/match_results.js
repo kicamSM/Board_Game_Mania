@@ -49,8 +49,8 @@ function countGameIds() {
 
     for(let i = 0; i < matches.length; i++) {
     
-      for(let j = 0; j < game_ids_no_dup.length; j++) {
-      let id = game_ids_no_dup[j]; 
+      for(let j = 0; j < gameIdsNoDup.length; j++) {
+      let id = gameIdsNoDup[j]; 
         console.log('matches[i]["game_id"]:', matches[i]['game_id'])
 
         if (typeof idCounts[id] === "number" || typeof idCounts[id] == 'undefined') {
@@ -72,8 +72,30 @@ function countGameIds() {
 
 
         if(id === matches[i]['game_id']) {
+          idCounts[id]++; 
+        }
+     
 
-          // if (typeof idCounts[id] === "number") {
+        if(id === matches[i]['game_id'] && matches[i]['win'] == true) {
+          wins[id]++; 
+      
+            }
+      }
+    }
+  $(retrieveGameResults(idCounts, wins))
+}
+
+// note=
+
+
+$(countGameIds)
+
+
+// ******************************************************************
+
+
+
+      // if (typeof idCounts[id] === "number") {
           //   console.log('INSIDE IF TYPEOF idCounts[id]', idCounts[id])
           //   if (isNaN(idCounts[id])) {
           //     idCounts[id] = 0;
@@ -89,29 +111,28 @@ function countGameIds() {
           //   }
           // }
         
-          console.log('id:', id)
-          console.log('if(id == matches[i]["game_id"])', id )
-          console.log('CHECK THIS idCounts[id]', idCounts[id])
-          idCounts[id]++; 
-          console.log('AGAINST THIS idCounts[id]', idCounts[id])
+          // console.log('id:', id)
+          // console.log('if(id == matches[i]["game_id"])', id )
+          // console.log('CHECK THIS idCounts[id]', idCounts[id])
+          // idCounts[id]++; 
+          // console.log('AGAINST THIS idCounts[id]', idCounts[id])
           // SO MY UNDERSTANDING OF THIS RIGHT NOW IS THAT BECAUSE THE SECOND ID IN LIST DOES NOT EQUAL THE FIRST ID IN LIST WE THEN GO TO THE ELSE STATEMENT WHICH RESETS THE LIST OF THE FIRST ID TO 1... DONT WANT THIS TO HAPPEN!!!!
-        }
-          // } else {
+
+
+     // } else {
           //   idCounts[id] = 1
           //   console.log('IS THIS IF STATEMENT RUNNING? idCounts::',  idCounts)
           //   console.log('id', id)
             
           //   console.log('matches[i]["game_id"]:', matches[i]['game_id'])
           // }
-
-        if(id === matches[i]['game_id'] && matches[i]['win'] == true) {
-          wins[id]++; 
-          // } else if (typeof wins[id] === "number") {
+          
+    // } else if (typeof wins[id] === "number") {
           //   console.log('INSIDE IF TYPEOF wins[id]', wins[id])
           //   if (isNaN(wins[id])) {
           //     wins[id] = 0;
           //     console.log('INSIDE IF IF (X2) TYPEOF idCounts[id]', idCounts[id])
-            }
+
           // } else {
           //   idCounts[id]++
             
@@ -131,12 +152,5 @@ function countGameIds() {
         //   // note this is having issues still because if you run the same game twice it game_ids_no_dup length is still 1 so it resets again. 
         //  }
         // }
-      }
-    }
-  $(retrieveGameResults(idCounts, wins))
-}
 
-// note=
-
-
-$(countGameIds)
+// ******************************************************************

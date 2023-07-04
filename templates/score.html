@@ -19,45 +19,17 @@
                             <!-- style="overflow:auto" -->
                             <!-- style="width: 800px, -->
                             <div class="text-center" id="score-board">
-                                <!-- <h2 class="card-title">{{ name }}</h2> -->
-                                <!-- <table border="1" width="200" height="200">
-                                    <thead id="table-head"> -->
-                                        <!-- <tr id="table-head">
-                                            NOTE THIS IS WHERE THE DYNAMICALLY APPENDED HTML of table head should be FROM score.js
-                                        </tr>
-                                    </thead>
-                                     <tbody> -->
-                                        <!-- <tr id="table-body"> -->
-                                            <!-- NOTE THIS IS WHERE THE DYNAMICALLY APPENDED HTML of table body should be FROM score.js -->
-                                        <!-- </tr> -->
-                                    <!-- </tbody> -->
-                                <!-- </table> -->
-
                                 <table class="table" id="myTable" border="1">
-                                <!-- </table><form>
-                                <input type="button" onclick="createTable()" value="Create the table">
-                                </form></body></html> -->
-                           
                             </div id="save-div">
                             <a href="/users/games" class="button btn1 btn btn-danger" style="font-size: 14px">Back</a>
                        
-                            <!-- <form action="/log_play/{{game_id}}/save/{{names_list_json}}" method="POST"> -->
                             <form id="form-route" method="POST">
-                                <!-- <input type="hidden" name="num_players" id="num_players" value="{{ num_players }}"></input> -->
-                                <!-- <a href="/log_play/{{game_id}}/save" class="button btn1 btn btn-success" style="font-size: 14px">Save</a> -->
-                                <!-- <script>
-                                    function lenNamesArray(){
-                                        let num_players = namesArray.length 
-                                        console.log('num_players:', num_players)
-                                        return num_players
-                                    }
-                                    
-                                    lenNamesArray()
-                                    </script> -->
+                       
                                 <button class="button btn1 btn btn-success" style="font-size: 14px" type="submit" name="win" id="win" value="">Save</button>
                                 <!-- <button class="hidden" id="num_players" name="num_players" value="{{namesArray}}"></button> -->
                             </form>
                             <a onclick="sumTotalTable()" class="button btn1 btn btn-info" style="font-size: 14px">Sum Scores</a>
+                            <a onclick="addRow()" class="button btn1 btn btn-success" style="font-size: 14px">Add Row</a>
                             </div>
                           </div>
                 </div>
@@ -76,42 +48,6 @@ crossorigin="anonymous"></script>
 console.log(namesArray)
 </script>
 <script type="text/javascript"> var game_id = "{{ game_id }}"; </script>
-
-
-
-<!-- <script type="text/javascript"> num_players = "{{namesArray}}.length" </script> -->
-
-<script>
-    // function sumTotal() {
-    //     var sum = 0;
-    //     console.log('sum:', sum)
-
-    //     $('.Player 2').each(function () {
-    //         sum += parseInt(this.innerText);
-    //     });
-
-    //     alert(sum); }
-
-//         var sum = 0;
-// 			//iterate through each textboxes and add the values
-//             console.log('$(".Player 2")', 	$(".Player 2")[0])
-// 			$(".Player 2").each(function() {
-// 				//add only if the value is number
-// 				if(!isNaN(this.value) && this.value.length!=0) {
-// 					sum += parseFloat(this.value);
-// 				}
-// 			});
-// 			//.toFixed() method will roundoff the final sum to 2 decimal places
-// 			$("#subtotal").val(sum.toFixed(2));
-//              alert(sum);
-//         }
-
-// </script>
-<!-- <script type="text/javascript"> var namesArray = "{{ names_list|safe }}";  
-    console.log(namesArray)
-</script> -->
-<!-- pip safe okay with being valid html injecting into the input BAD scenary user makes username as html but in this case user who si adding the code is the user who running the data and therefore they could only hack themselves. -->
-
 <script src="/static/score.js"></script>
 
 </body>

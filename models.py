@@ -5,6 +5,7 @@ import datetime
 from sqlalchemy.orm import relationship, backref
 import sqlalchemy as sa
 from sqlalchemy.orm import declarative_base
+from datetime import datetime
 # added this
 
 Base = declarative_base()
@@ -106,8 +107,9 @@ class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     game_id = db.Column(db.String, db.ForeignKey('games.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    num_players = db.Column(db.Integer, nullable=False)
+    # num_players = db.Column(db.Integer, nullable=False)
     win = db.Column(db.Boolean, nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     
     
     players = relationship('Player', secondary='match_player', back_populates='matches')
@@ -117,11 +119,19 @@ class Match(db.Model):
             'id': self.id, 
             'game_id': self.game_id,
             'user_id': self.user_id,
-            'num_players': self.num_players,
-            'win': self.win
+            'win': self.win,
+            # 'timestamp': self.timestamp
         }
         
-    
+        
+    # def serialize(self): 
+    #     return {
+    #         'id': self.id, 
+    #         'game_id': self.game_id,
+    #         'user_id': self.user_id,
+    #         'num_players': self.num_players,
+    #         'win': self.win
+    #     }
     # users = relationship('User', secondary='user_match', back_populates='matches' )
     # working on getting matches relationship set up to users. 
     # this would be a two way relationship you need a one way relationsip 
@@ -174,10 +184,6 @@ class Player(db.Model):
     __tablename__ = 'players'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # first_name = db.Column(db.String)
-    # last_name = db.Column(db.String)
-    # name = db.Column(db.String, nullable=True)
-    # username = db.Column(db.Text, db.ForeignKey('users.username'), nullable=True,  unique=True)
     email = db.Column(db.String, nullable=False, unique=True)
     # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     matches = relationship('Match', secondary='match_player', back_populates='players' )
@@ -188,7 +194,10 @@ class Player(db.Model):
     def __repr__(self):
         return f"<Player {self.id} {self.email}>"
     
-    
+    # first_name = db.Column(db.String)
+    # last_name = db.Column(db.String)
+    # name = db.Column(db.String, nullable=True)
+    # username = db.Column(db.Text, db.ForeignKey('users.username'), nullable=True,  unique=True)
     
 # class Match(db.Model):
 #     """Matches Model"""

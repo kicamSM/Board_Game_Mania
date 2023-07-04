@@ -30,7 +30,7 @@ async function displayGames() {
     console.log('displayGames is running')
     // const response = await axios.get(`${BASE_URL}/games`);
     // console.log(API_BASE_URL)
-    const response = await axios.get(`${API_BASE_URL}api/games/${game_id}`);
+    const response = await axios.get(`${API_BASE_URL}api/games/${gameId}`);
     // this we are pulling from the route in the API for games 
 
     let gameData = response.data.games[0]

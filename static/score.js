@@ -39,89 +39,29 @@ function generateBodyHTML() {
     row_num = window.prompt("Input number of turns if known. Otherwise, press ok", 1);
 
     col_num = namesArray.length;
-    // console.log(col_num)
-    // console.log(cn)
-    // console.log(players)
-    // cn = window.prompt("Input number of columns",1);
-      
-    //  for(let r = 0; r < parseInt(row_num, 10); r++) {
+    
         for(let row = 0; row < row_num; row++) {
             let table = document.getElementById('myTable');
             let body = table.createTBody();
-            // body.id = 'tbody'
-            // body.setAttribute(contenteditable)
-            body.className = 'tbody'
-            // console.log(body)
+    
+            body.id = 'tbody'
+         
             let rowEle = body.insertRow()
-            // console.log('first row:', row)3
  
             for(let cell = 0; cell < parseInt(col_num,10); cell++) {
-            //  let y = x.insertCell(c);
                 let cellEle = rowEle.insertCell(cell);
-                cellEle.id = (`${row}-${cell}`)
-                // console.log('row:', row)
+                // cellEle.id = (`${row}-${cell}`)
                 if(cell = namesArray.indexOf(namesArray[cell])) {
-                    // sets class = name from names array in correct column 
-                    // cellEle.className = namesArray[cell]
                     cellEle.className = `Player${cell}`
-                    console.log('cell:', cell)
-                    // ['ben', 'tom', 'chris']
                 }
-                // cellEle.className = 'data'
-                // cellEle.contenteditable = 'true'
+           
                 cellEle.setAttribute('contenteditable', 'true')
-            //   console.log(y.id)
-                // cellEle.innerHTML="Row-"+row+" Column-"+cell;
-                // console.log(cellEle)
-
-                // I wonder if this is messing with the content editable being updated since I am adding a event listener of clikc on the element? 
-                // cellEle.addEventListener("click", function(e) {
-                //     console.log('add event listener is running')
-                //     e.preventDefault();
-                //     // id = this.id
-                //     // sessionStorage.setItem('id', JSON.stringify(id));
-                //     // console.log('id:', id)
-                //     // row = id.substring(0, id.indexOf('-'))
-                //     // console.log('id.indexOf('-'):', id.indexOf('-'))
-                //     // console.log('typeof(id.indexOf('-')):', typeof(id.indexOf('-')))
-                //     // this is returning the row not the col
-                //     // console.log('row:', row)
-                //     // idLastCharInd = (id.length - 1)
-
-                //     // console.log('idLastCharInd:', idLastCharInd)
-                //     // col = id.substring((id.indexOf('-') + 1))
-                
-                //     // col = id.substring(1, 3)
-                //     // console.log('id.indexOf('-'):', id.indexOf('-'))
-                //     // console.log('idLastCharInd:', idLastCharInd)
-                //     // console.log('col:', col)
-
-                //     // $(upDateScore(col, id))
-                //     $(sumTotalTable)
-                    
-                // })
-
-            //  make contenteditable true when other elements have contentiable filled out already. 
-
-            // if the element clicked on is greater than or equal to row and col && all of those has inner.html != "" then do this....
-                
-                
-            // id = JSON.parse(sessionStorage.getItem('id'))
-            // console.log('this id is running:', id)
-
-            // let col_num = id.substring((id.indexOf('-') + 1))
-
-            // if(col_num = namesArray.length && )  
-
+            
                 $('[contenteditable="true"]').keypress(function(e) {
                     var x = event.charCode || event.keyCode;
                     // console.log('x:', x)
                     if (isNaN(String.fromCharCode(e.which)) && x!=46 || x===32 || x===13 || (x===46 && event.currentTarget.innerText.includes('.'))) e.preventDefault();
                     // console.log(currentTarget.id)
-
-                
-                
-                // if document.getElementById(${`footer-${}`})
             });
         }
     }
@@ -180,26 +120,45 @@ function generateFooterHTML() {
 //     } }
 // }
 
+function addRow() {
+    body = document.getElementById('tbody')
+    table = document.getElementById('myTable')
+    let col_num = namesArray.length;
+    let newRow = document.createElement('tr')
+
+    for(let cell = 0; cell < parseInt(col_num,10); cell++) {
+            let cellEle = newRow.insertCell(cell);
+            console.log('cellEle', cellEle)
+            newRow.appendChild(cellEle)
+
+            if(cell = namesArray.indexOf(namesArray[cell])) {
+                cellEle.className = `Player${cell}`
+            }
+            console.log('body', body)
+            body.appendChild(newRow)
+
+            cellEle.setAttribute('contenteditable', 'true')
+        
+            $('[contenteditable="true"]').keypress(function(e) {
+                var x = event.charCode || event.keyCode;
+                // console.log('x:', x)
+                if (isNaN(String.fromCharCode(e.which)) && x!=46 || x===32 || x===13 || (x===46 && event.currentTarget.innerText.includes('.'))) e.preventDefault();
+        })
+    }
+}
 
 function sumTotalTable() {
-    // let rows = table.querySelectorAll('tr')
+    
     let rows = $("#myTable").find("tbody>tr");
-    // console.log("rows:", rows)
-
-    // let footers = document.getElementsByClassName('footer')
     let footers = $(".footer")
-    // console.log('footers:', footers)
     let sumArray = []
 
     for (let i = 0; i < rows[0].cells.length; i++) {
-        // console.log('rows[0].cells.length:', rows[0].cells.length)
-        // console.log('note that these two should be equal')
-        // console.log('namesArray.length:', namesArray.length)
-        var sum = 0; 
+        let sum = 0; 
 
         for (let j = 0; j < rows.length; j++) {
             console.log('rows.length:', rows.length)
-            var cell = rows[j].cells[i];
+            let cell = rows[j].cells[i];
             // j is the index of the row 
             // i is the index of the cell
             // basically we are taking the table body back apart the way we put it together
@@ -211,60 +170,39 @@ function sumTotalTable() {
             if (!isNaN(parseInt(cell.textContent, 10))) {
                 sum += parseInt(cell.textContent, 10);
             }
-            // sum += parseInt(cell.textContent, 10);
         }
-        // innner loop you were not previously working with so that was your missing piece. 
 
         footers[i].textContent = sum;
         sumArray.push(sum)
         console.log('sumArray', sumArray)
-
     }
-
-           // Add the sum cells to the new row
-    //        for (let i = 0; i < footers.length; i++) {
-    //         newRow.appendChild(sumCells[i]);
-
-    // }
     document.getElementById('form-route').action = `/log_play/${game_id}/save/${namesArray}/${sumArray}`
     $(declareWinOrLoss)
-    // $('#form-route').attr('action', `/log_play/${game_id}/save/${namesArray}}/${sumArray}`);
-    
-    // $(postScoreToRoute(sumArray))
 }
 
 function declareWinOrLoss() {
+
     let userTotalObj = document.getElementById("foot-0")
-    console.log("userTotalObj:", userTotalObj)
-    // userTotal = userTotalObj.innerText
     let userTotalStr = userTotalObj.textContent
     let userTotal = parseInt(userTotalStr)
-
     let totalsObj = document.getElementsByClassName("footer")
   
     for(let i = 1; i < totalsObj.length; i++) {
 
         let total = parseInt(totalsObj[i].innerText, 10);
-        console.log('total:', total)
         let input = document.getElementById('win')
 
         if(total >= userTotal) {
             console.log(false)
             let win = false
             input.setAttribute("value", `${win}`)
-            // localStorage.setItem('win', win)
             }
         else {
             console.log(true)
             let win = true
             input.setAttribute("value", `${win}`)
         }
-        // let input = document.getElementById('win')
-        // console.log(input)
-        // input.setAttribute("value", win)
-       
     }
- 
 }
 
 $(generateHeaderHTML)
