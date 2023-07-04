@@ -13,6 +13,7 @@ from forms import RegistrationForm, LoginForm, UserEditForm
 from sqlalchemy.exc import IntegrityError
 
 from sqlalchemy import create_engine
+import os
 
 engine = create_engine("postgresql:///board_game_db")
 
@@ -23,7 +24,8 @@ SQLSessionMaker = sessionmaker(bind = engine)
 API_BASE_URL = 'https://api.boardgameatlas.com/api/'
 # response = requests.get('https://api.boardgameatlas.com/api/game/prices?game_id=6FmFeux5xH&client_id=yApNU591Nc')
 
-client_id = "3Ya324qQb2"
+
+client_id = os.getenv('client_id')
 # note you have to use an f string to add this into the response
 # response = requests.get(f'https://api.boardgameatlas.com/api/lists?username=trentellingsen&client_id={client_id}')
 
@@ -34,7 +36,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///board_game_db'
 
 app.config['SQLALCHEMY_ECHO'] = True
 
-app.config['SECRET_KEY'] = "iloverollerderby12"
+# app.config['SECRET_KEY'] = "iloverollerderby12"
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
@@ -87,7 +90,7 @@ def display_home():
     """Display home page"""
     
     background_resp = requests.get(f'{API_BASE_URL}/game/images?limit=1&client_id={client_id}') 
-    
+    # raise ValueError(background_resp)
     background_data = background_resp.json()
 
     for result in background_data['images']:
@@ -324,23 +327,11 @@ def log_play_for_user(game_id):
         flash("Please make an account to use this feature.", "danger")
         return redirect("/")
     
-    # form = ScoreNameForm()
-    # if form.validate_on_submit():
-    #     first_name = form.first_name.data
-    #     last_name = form.last_name.data
-    #     user_id = form.user_id.data
-    
-    # raise ValueError(game_id)
-    
     response = requests.get(f'{API_BASE_URL}/search?ids={game_id}&client_id={client_id}')
     # this is returning one game 
     
     g_data = response.json()
-    # raise ValueError(g_data)
-
-    # min_players = [min_players['min_players'] for min_players in g_data['games']]
-    # raise ValueError(min_players)
-    # max_players = [max_players['max_players'] for max_players in g_data['games']]
+ 
     min_players = g_data['games'][0]['min_players']
     max_players = g_data['games'][0]['max_players']
     name = g_data['games'][0]['name']
@@ -356,14 +347,13 @@ def name_entry(g_name, game_id):
     username = g.user.username
     email = g.user.email
 
-    # session['num_players'] = num_players
-
     return render_template('name_entry.html', num_players=num_players, g_name=g_name, username=username, email=email, game_id=game_id)
 
 @app.route('/log_play/<string:g_name>/<game_id>/score', methods=['GET','POST'])
 def keep_score(g_name, game_id): 
     """Track the Score"""
     # raise ValueError(name)
+    
     names_emails_dict = dict(request.form)
     names_dict = dict(list(names_emails_dict.items())[::2])
     emails_dict = dict(list(names_emails_dict.items())[1::2])
@@ -371,6 +361,7 @@ def keep_score(g_name, game_id):
     emails_list = list(emails_dict.values())
     names_list = list(names_dict.values())
     players_ids_list = []
+    
 
     for email in emails_list: 
         new_player = Player(email=email)
@@ -380,12 +371,10 @@ def keep_score(g_name, game_id):
         except: 
             db.session.rollback()
             print('this player has already been added')
-            
+    # raise ValueError(emails_list)
     for one_email in emails_list:
-        # raise ValueError(emails_list)
         player = Player.query.filter_by(email=f"{one_email}").first()
         player_id = player.id
-        
         players_ids_list.append(player_id)
         
     # raise ValueError(players_ids_list)
@@ -402,12 +391,9 @@ def keep_score(g_name, game_id):
             if index == 0:
                 names_list[0] = g.user.username
                 
-        # new_player = 
-    # NEED TO RETRIEVE THE SCORES FROM THE SCOREBOARD 
-    
     names_list_json = json.dumps(names_list)
     # grabbing names out of form
-    
+
     return render_template('score.html', names_list_json=names_list_json, g_name=g_name, game_id=game_id)
     # return render_template('score.html', names_list=names_list)
 
@@ -436,7 +422,7 @@ def keep_score(g_name, game_id):
 
 
 def check_if_greater_than_all(list_scores):
-    # raise ValueError('list_scores in check if greater than  all', list_scores)
+    """Grabs the largest score"""
     list_scores.sort()
     largest_num = list_scores.pop(); 
     # raise ValueError(largest_num, all(largest_num > score for score in list_scores))
@@ -445,60 +431,25 @@ def check_if_greater_than_all(list_scores):
         
 
 def false_if_not_greater_than_all(list_scores):
+    """Returns False if not greater than all scores"""
     _list_scores = list_scores.copy()
     greatest, is_greater_than_all = check_if_greater_than_all(_list_scores)
-    # print(map_greatest(list_scores, greatest, is_greater_than_all))
     return map_greatest(list_scores, greatest, is_greater_than_all)
 
 def map_greatest(list_scores, greatest: int, is_greater_than_all):
-   
+    """maps greatest score"""
     list_wins = [is_greater_than_all if score == greatest else False for score in list_scores]
     finish_route(list_wins, list_scores)
     
 def finish_route(list_wins, list_scores):
-    print('*************************************************')
-    print('how many times is this function running????')
-    print('*************************************************')
-
-    # raise ValueError(list_wins)
+    """Adds Scores to new_match_player table"""
     players_ids = session['players_ids_list']
-    # raise ValueError(players_ids)
-    # raise ValueError(players_ids)
-    # list_scores = session['list_scores']
-    # raise ValueError(list_scores)
     match_id = session['match_id']
-    # raise ValueError(match_id)
-    # match = Match.query.get(match_id)
-    # raise ValueError(players_ids)
-    # raise ValueError(list_wins)
-    # session['list_wins'] = 'list_wins'
-        
-    # maybe could do something like 
-    # for x, y, z in itertools.product(list1, list2, list3):
-    
     max_length = (max(len(players_ids), len(list_wins), len(list_scores)))
-    # raise ValueError('max length', max_length)
-    # raise ValueError('player_ids', players_ids)
+    
     for i in range(max_length):
-    # for player_id, win, score in (players_ids, list_wins, list_scores): 
-        # this is using itertools
-        # player = Player.query.get(players_ids[i])
-        # raise ValueError(player)
-   
-        # you need a win for match_player and a score 
         new_match_player = match_player.insert().values(match_id=match_id, player_id=players_ids[i], win=list_wins[i], score=list_scores[i])
         # raise ValueError(new_match_player)
-
-        # raise ValueError(player)
-        # player.matches.append(match)
-        # try:
-        #     db.session.execute(new_match_player)
-        #     db.session.commit()
-        #     return redirect('/match/results')
-            
-        # except IntegrityError:
-        #     pass
-        #     return redirect('/match/results')
         db.session.execute(new_match_player)
     db.session.commit()
     return redirect('/match/results')
@@ -514,65 +465,41 @@ def save_results_in_table(game_id, names_list_json, scores):
         flash("Please make an account to use this feature.", "danger")
         return redirect("/")
     
-# Note THAT PASSING MY SCORES THROUGH THE URL IS NOT IDEAL I WOULD MUCH RATHER USE AXIOS.POST TO DO THIS. HOWVER, I CANT GET THAT TO FUNCTION SO I AM MOVING FORWARD UNTIL I CAN COME BACK TO IT
+    winStr = request.form['win']
+   
+    win = json.loads(winStr.lower())
+    # raise ValueError(win)
+    
+    new_match = Match(game_id=game_id, user_id=g.user.id, win=win)
+    db.session.add(new_match)
+    db.session.commit()
+    match_id = new_match.id
+    # raise ValueError(match_id)
+    session['match_id'] = match_id
+    string_scores = scores.split(',')
+    # raise ValueError(list_scores)
+    list_scores = []
+    # raise ValueError(list_scores)
+
+    for string_score in string_scores:
+        integer = int(string_score)
+        list_scores.append(integer)
+    
+    false_if_not_greater_than_all(list_scores)
+
+    return redirect('/match/results')
+
+    
+
+
+    # # Note THAT PASSING MY SCORES THROUGH THE URL IS NOT IDEAL I WOULD MUCH RATHER USE AXIOS.POST TO DO THIS. HOWVER, I CANT GET THAT TO FUNCTION SO I AM MOVING FORWARD UNTIL I CAN COME BACK TO IT
     # raise ValueError(type(names_list_json))
     # names_list = json.loads(names_list_json)
     # names_list = names_list_json
     # raise ValueError(names_list)
     # num_players = len(names_list)
     # raise ValueError(len(names_list))
-    user = User.query.get_or_404(g.user.id)
-    winStr = request.form['win']
-    win = json.loads(winStr.lower())
-    # raise ValueError(win)
-    
-    new_match = Match(game_id=game_id, user_id=g.user.id, win=win)
-    # new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
-    # new_match = Match(game_id=game_id, user_id=g.user.id, win=win, num_players=num_players)
-    db.session.add(new_match)
-    db.session.commit()
-    
-    match_id = new_match.id
-    # raise ValueError(match_id)
-    
-    session['match_id'] = match_id
-    
-    # match = Match.query.get(match_id)
-    # raise ValueError(match)
-    
-    string_scores = scores.split(',')
-    # raise ValueError(list_scores)
-    list_scores = []
-    # raise ValueError(list_scores)
-
-
-    for string_score in string_scores:
-        integer = int(string_score)
-        list_scores.append(integer)
-        
-    # raise ValueError(list_scores)
-    
-    matches_players = Player.query.join(match_player).join(Match).filter_by(id=match_id).all()
-    # raise ValueError(matches_players)
-    
-    # if(len(list_scores) == len(matches_players)):
-    #     return redirect('/match/results')
-    
-    # else:
-    #     false_if_not_greater_than_all(list_scores)
-    # check_if_greater_than_all(list_scores)
-    
-    false_if_not_greater_than_all(list_scores)
-
-    return redirect('/match/results')
-    # list_wins = []
-    # list wins will look something like [false, false, true, false]
-    # raise ValueError(list_scores)
-    # session['list_scores'] = 'list_scores'
-    
-
-
-    # *******************************************************************************************************************
+    # user = User.query.get_or_404(g.user.id)*******************************************************************************************************************
         # this=one will be closer to the truth in what you are actually using 
         
     # for player_id in players_ids: 

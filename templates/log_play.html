@@ -15,30 +15,18 @@
                     <h1 class="h1background">Play</h1>
                 </div>
                 <div  class="text-center row row-cols-1 row-cols-md-3">
-                <div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
-                    <div class="card p-4" id="range-card">
-                    <h2 class="card-title">How many players will be playing {{ name }}?</h2>
-                    <!-- <form action="/log_play/{{q}}/score" method="POST"> -->
-                    <!-- <form action="/log_play/{{ name }}/score" method="POST"> -->
-                    <!-- <form action="" method="POST" id="player-count"> -->
-                    <!-- <form action="/users/{{ game_id }}/log_play" method="POST"> -->
-                    <form action="/log_play/{{ name }}/{{ game_id }}/name_entry" method="POST">
-                    <div class="slidecontainer">
-                        <input name="q" type="range" value="{{ max_players }}" min="{{ min_players }}" max="{{ max_players }}" oninput="this.nextElementSibling.value = this.value">
-                        <output>{{ max_players }}</output>
-                        <button class="btn btn1 btn-success btn-block btn-sm" type="submit">Submit</button>
-                    </div>
-                    </form>
-
-                        <div id="name-div">
-                            <!-- <form id="name-form">
-
-                            </form> -->
-
+                    <div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+                        <div class="card p-4" id="range-card">
+                            <h2 class="card-title">How many players will be playing {{ name }}?</h2>
+                            <form action="/log_play/{{ name }}/{{ game_id }}/name_entry" method="POST">
+                                <div class="slidecontainer">
+                                    <input name="q" type="range" value="{{ max_players }}" min="{{ min_players }}" max="{{ max_players }}" oninput="this.nextElementSibling.value = this.value">
+                                    <output>{{ max_players }}</output>
+                                    <button class="btn btn1 btn-success btn-block btn-sm" type="submit">Submit</button>
+                                </div>
+                            </form>
                         </div>
-                      </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
@@ -49,11 +37,6 @@
 src="https://code.jquery.com/jquery-3.4.1.min.js"
 integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
 crossorigin="anonymous"></script>
-<!-- <script src="/static/log_play.js"></script> -->
-<!-- <script type="text/javascript"> var players = "{{ players }}"; </script> -->
-<!-- <script>players=parseInt("{{ players }}")</script> -->
-<!-- <script type="text/javascript"> var name = "{{ name }}";
- </script>  -->
 <script src="/static/log_play.js"></script>
 </body>
 {% endblock %}

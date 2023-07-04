@@ -1,8 +1,4 @@
 
-// import axios from 'axios';
-
-// console.log('namesArray in score.js:', namesArray)
-
 function generateHeaderHTML() {
     // let header = document.getElementById('myTable').insertRow(0);
     let table = document.getElementById('myTable');
@@ -20,23 +16,28 @@ function generateHeaderHTML() {
    $(generateBodyHTML);
 
 }
-// breaking this up because the issue of having too many for loops nested is causing problems. 
 
-// function generateButtonHTML(win, num_players, game_id) {
-//     console.log('generate button html is running')
-//     console.log('win:', win)
-//     return `
-//     <form action="/log_play/${game_id}/save" method="POST">
-//         <input type="hidden" name="win" id="win" value="${win}"></input>
-//         <input type="hidden" name="num_players" id="num_players" value="${num_players}"></input>
-//         <button class="button btn1 btn btn-success" type="submit" style="font-size: 14px">Save</button>
-//     </form>`
-   
-// }
+
+function promptNumber() {
+    let number = prompt("Input number of turns if known. Otherwise, press ok.", 1)
+    let input = /^[0-9]+$/
+    if (input.test(number)) {
+        if(number === '0' ) {
+            console.log('number', number)
+            number ++; 
+        }
+        return number
+    } else {
+        let number = 1;
+        return number 
+    }
+  }
 
 function generateBodyHTML() {
-    // console.log('generateGameHTML is running in score.js')
-    row_num = window.prompt("Input number of turns if known. Otherwise, press ok", 1);
+    row_num = promptNumber()
+
+    console.log('row_num', row_num)
+    console.log('type row_num', typeof(row_num))
 
     col_num = namesArray.length;
     
@@ -84,41 +85,9 @@ function generateFooterHTML() {
     cellEle.id = (`foot-${cell}`)
     cellEle.className = 'footer'
     cellEle.innerHTML="Score"; 
-    // console.log('row:', row)
     }
 }
 
-
-
-// function upDateScore(col, id) {
-
-//     // document.addEventListener("DOMContentLoaded") {
-//     footer = document.getElementById(`foot-${col}`)
-//     // console.log(footer)
-//     // cellEle.addEventListener("click", function(e) {
-//     //     console.log('add event listener is running')
-//     //     e.preventDefault();
-//     //     id = this.id)
-
-//     if(footer.innerHTML = 'Score') {
-//         // console.log('if statement is running in sum values')
-//         cell = document.getElementById(id)
-//         console.log('cell:', cell)
-//         // console.log('cell.innerhtml:', cell.innerHTML)
-//         // this is not actually getting the innnerHTML
-//         // console.log(cell.innerText)
-//         footer.innerHTML = `${cell.innerHTML}`
-//         // document.getElementById(`foot-${col}`).innerHTML = `${cell.innerHTML}`
-//         if(cell.innerHTML != '') {
-//             console.log('this element has innerhtml')
-//         //   inner html is not loading until second click on element
-//         }
-        
-
-//         $(sumTotalTable)
-
-//     } }
-// }
 
 function addRow() {
     body = document.getElementById('tbody')
@@ -148,7 +117,7 @@ function addRow() {
 }
 
 function sumTotalTable() {
-    
+
     let rows = $("#myTable").find("tbody>tr");
     let footers = $(".footer")
     let sumArray = []
@@ -176,6 +145,8 @@ function sumTotalTable() {
         sumArray.push(sum)
         console.log('sumArray', sumArray)
     }
+    document.getElementById('win').style = "font-size: 14px" 
+    console.log(document.getElementById('win'))
     document.getElementById('form-route').action = `/log_play/${game_id}/save/${namesArray}/${sumArray}`
     $(declareWinOrLoss)
 }
@@ -191,6 +162,7 @@ function declareWinOrLoss() {
 
         let total = parseInt(totalsObj[i].innerText, 10);
         let input = document.getElementById('win')
+        console.log('input', input)
 
         if(total >= userTotal) {
             console.log(false)

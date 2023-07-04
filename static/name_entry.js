@@ -1,11 +1,5 @@
-// console.log('name_entry.js is running!')
-
-// console.log(num_players)
-// console.log(g_name)
-// console.log(typeof num_players)
 
 let intPlayers = parseInt(numPlayers)
-// console.log(typeof int_players)
 
 function createForm() {
     let form = document.createElement("form");
@@ -13,7 +7,7 @@ function createForm() {
     form.method = "post";
     if(intPlayers === 1) {
       intPlayers++;
-      // note this is because 
+      // This is because if you are playing a one person game you play against the board so the board will have a place to be scored.
     }
 
     for (let i = 1; i <= intPlayers; i++) {
@@ -38,24 +32,18 @@ function createForm() {
     
         form.appendChild(inputName);
         form.appendChild(inputEmail)
-        // form.appendChild(inputAge);
       }
 
-      var submitButton = document.createElement("input");
+      let submitButton = document.createElement("input");
       submitButton.type = "submit";
       submitButton.value = "Create Scoreboard";
       submitButton.className = "button btn1 btn btn-success"
       submitButton.style = "font-size: 14px"
-
-    //   <a href="/games/{{game_id}}/add" class="button btn1 btn btn-success" style="font-size: 14px">Create Scoreboard</a>
-    //   this is appending which makes me think the form in theory is appending
     
       form.appendChild(submitButton);
     
       // document.body.appendChild(form);
       $("#name-entry").append(form)
     }
-
-    // var n = parseInt(document.querySelector("input[name=n]").value);
 
 $(createForm);
