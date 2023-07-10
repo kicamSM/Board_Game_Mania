@@ -271,6 +271,7 @@ def display_search_games():
     
     data = session['games']
     jsonify(data)
+
     
     return render_template('game_search.html')
 
@@ -315,6 +316,11 @@ def log_play_for_user(game_id):
 
 @app.route('/log_play/<string:g_name>/<game_id>/name_entry', methods=['GET','POST'])
 def name_entry(g_name, game_id):
+    
+    if not g.user:
+        flash("Please make an account to use this feature.", "danger")
+        return redirect("/")
+    
     form_req = dict(request.form)
     num_players = form_req['q']
     # raise ValueError(num_players)
@@ -568,16 +574,10 @@ def api_result_games():
         return redirect("/")
     
     game_ids = session['game_ids']
-    # raise ValueError('games:', games)
-    # gets game ids out of session for results 
-    # raise ValueError(game_ids)
-
     string_ids = ','.join(game_ids)
-    # raise ValueError(string_ids)
     
     response = requests.get(f'{API_BASE_URL}/search?ids={string_ids}&client_id={client_id}')
     games = response.json()
-    # raise ValueError(games)
     
     return games 
 
@@ -592,10 +592,6 @@ def convert_to_dict(data):
         win = row[3]
         score = row[4]
     
-        
-        
-        # result.setdefault(match_id, {})
-        # result[match_id] = {
         result = {
             'match_id': match_id, 
             'email': email, 
@@ -606,14 +602,12 @@ def convert_to_dict(data):
 
 def convert_list_to_date(date_list):
   """Converts a list of integers representing the year, month, and day into a string representing the date in the format mm/dd/yyyy."""
-#   raise ValueError(date_list)
   year = date_list[0]
   month = date_list[1]
   day = date_list[2]
   date = datetime.datetime(year, month, day)
-#   raise ValueError(date)
   this_date = date.strftime("%m/%d/%Y")
-#   raise ValueError(this_date)
+
   return this_date
 
 @app.route('/game/results/<game_id>', methods=['GET'])

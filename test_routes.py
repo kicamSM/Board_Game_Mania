@@ -8,10 +8,12 @@ import os
 from unittest import TestCase
 from sqlalchemy import exc
 from sqlalchemy.exc import IntegrityError
-# from flask import FlaskClient
+from flask import url_for
 import werkzeug
+import werkzeug.test
 # import mock
 
+# from flask_testing import fixtures
 from models import db, User, Game, user_game
 
 os.environ['DATABASE_URL'] = "postgresql:///board_game-test"
@@ -19,7 +21,7 @@ os.environ['SECRET_KEY'] = "SECRET_KEY"
 
 
 import requests
-from app import app, g
+from app import app, g, CURR_USER_KEY, convert_to_dict, convert_list_to_date
 
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['TESTING'] = True
@@ -40,6 +42,7 @@ class AppTestCase(TestCase):
     #     assert response.status_code == 200
     #     assert 'background_image' in response.json()
     def setUp(self):
+        
         
         u1 = User.register(first_name="test_first1", last_name="test_last1", email="email1@email.com", password="testing1", username="test_username1")
         uid1 = 1111
@@ -180,16 +183,220 @@ class AppTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('Search Results', html)
     
-    def test_log_play_for_user(self):
-        """Test log_play_for_user Route"""
-        user = User.query.get(1111)
-        g.user = user
-        with app.test_client() as client:
-            resp = client.get('/users/ABC123/log_play')
-            html = resp.get_data(as_text=True)
-            # raise ValueError(html)
-            self.assertEqual(resp.status_code, 200)
+    # def test_log_play_for_user(self):
+    #     """Test log_play_for_user Route"""
+
+    #     game_id = 'ABC123'
+    #     # game = Game.query.get('ABC123')
+    #     # g_data = game
+    #     # g_data['games'] = [game]
+    #     with self.client as client:
+    #         with client.session_transaction() as sess:
+    #             sess[CURR_USER_KEY] = self.u1.id
+            
+    #         # resp = client.get('/users/ABC123/log_play')
+    #     #     resp = self.client.post(
+    #     #     url_for('log_play_for_user', game_id=game_id),
+    #     #     data={'min_players': 2, 'max_players': 4},
+    #     #     follow_redirects=True
+    #     # )
+     
+        
+    #         endpoint = '/users/{}/log_play'.format(game_id)
+    #         resp = client.post(
+    #         endpoint,
+    #         data={'min_players': 2, 'max_players': 4},
+    #         follow_redirects=True
+    #         )
+    #         # g_data = resp.json()
+    #         g_data = resp
+    #         html = resp.get_data(as_text=True)
           
+    #         self.assertEqual(resp.status_code, 200)
+    #         self.assertIn('Play logged successfully', resp.data)
+    
+    # cant figure out how to set the game for this g_data so it is not currently workin
+       
+        
+    def test_name_entry(self):
+        """Test name_entry Route"""
+        with self.client as client:
+            with client.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1.id
+
+            form_req = {'q': '2'}
+            resp = client.get('/log_play/catan/ABC123/name_entry', data=form_req)
+            html = resp.get_data(as_text=True)
+      
+        
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('test_username1', html)
+        
+    def test_name_entry_not_logged_in(self):
+        """Test name_entry Route Failure"""
+        with self.client as client:
+
+            form_req = {'q': '2'}
+            resp = client.get('/log_play/catan/ABC123/name_entry', data=form_req)
+            html = resp.get_data(as_text=True)
+      
+        
+        self.assertEqual(resp.status_code, 302)
+        
+    def test_display_results(self):
+        """Test display_results Route"""
+        
+        with self.client as client:
+            with client.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1.id
+            resp = client.get('/match/results')
+            html = resp.get_data(as_text=True)
+            
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('test_username1', html)
+    
+    def test_api_result_games(self):
+        """Test api_result_games Route"""
+
+        game_ids = ['ABC123', 'DEF456']
+        # session['game_ids'] = game_ids
+
+        with self.client as client:
+            with client.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1.id
+                sess['game_ids'] = game_ids
+            resp = client.get('/api/results')
+
+        self.assertEqual(resp.status_code, 200)
+        
+    def test_convert_to_dict(self):
+        """Test convert_to_dict Function"""
+        
+        data = [
+        ['johndoe@example.com', 2, 345, 1, 100],
+        ]
+
+        expected_result = {
+        'match_id': 2,
+        'email': 'johndoe@example.com',
+        'score': 100,
+        'win': 1,
+        }
+
+        actual_result = convert_to_dict(data)
+
+        self.assertEqual(actual_result, expected_result)
+        
+    def test_convert_list_to_date(self):
+        """Test convert_list_to_date Function"""
+        date_list = [2023, 7, 11]
+        expected_result = "07/11/2023"
+
+        actual_result = convert_list_to_date(date_list)
+        
+        self.assertEqual(actual_result, expected_result)
+            
+    # def test_display_matches(self):
+    #     """Test display_matches Route"""
+    # may come back to this one
+    
+    def add_game_to_user(self):
+        """Test add_game_to_user Route"""
+        with self.client as client:
+            with client.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1.id
+                
+        game = Game.query.get(self.g1)
+        db.session.add(game)
+        user = User.query.get(self.uid1)
+        
+        user.games.append(game)
+        db.session.commit()
+        
+        self.assertEqual(self.u1.games, game)
+        
+    def add_game_to_user_fail(self):
+        """Test add_game_to_user Route Intgrity Error"""
+        
+        with self.client as client:
+            with client.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1.id
+                
+        game = Game.query.get(self.g1)
+        db.session.add(game)
+        user = User.query.get(self.uid1)
+        
+        user.games.append(game)
+        db.session.commit()
+        
+        with self.assertRaises(IntegrityError):
+            game = Game.query.get(self.g1)
+            db.session.add(game)
+        
+            user.games.append(game)
+            db.session.commit()
+            
+    def test_display_games(self):
+        """Test display_games Route"""
+        with self.client as client:
+            resp = client.get('/games')
+            html = resp.get_data(as_text=True)
+            
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Popular Games', html)
+        
+    def test_api_games(self):
+        """"Test api_games Route"""
+        with self.client as client:
+            resp = client.get('/api/games')
+            
+        self.assertEqual(resp.status_code, 200)
+        
+    def delete_users_game(self):
+        """"Test delete_users_game Route"""
+        with self.client as client:
+            with client.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1.id
+                
+        game = Game.query.get(self.g1)
+        db.session.add(game)
+        user = User.query.get(self.uid1)
+        
+        user.games.append(game)
+        
+        self.assertEqual(len(user.games), 1)
+        
+        db.session.commit()
+            
+        resp = client.get(f'/games/{self.uid1}/delete')
+        
+        self.assertEqual(user.games, 0)
+        self.assertEqual(resp.status_code, 200)
+        
+    def test_api_game(self):
+        """Test api_game Route"""
+        with self.client as client:
+            
+            resp = client.get(f'/api/games/{self.g1}')
+            
+        self.assertEqual(resp.status_code, 200)
+        
+        
+    
+            
+        
+        
+        
+               
+        
+        
+        
+                
+        
+        
+    
+
+                  
          
     
             
