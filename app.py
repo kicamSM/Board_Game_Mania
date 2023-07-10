@@ -232,12 +232,6 @@ def api_users_games():
     # raise ValueError(user)
 
     list_of_games = user.games
-    # raise ValueError(list_of_games.len())
-    # if list_of_games.len = 0; 
-    
-    # print(list_of_games)
-    # raise ValueError(list_of_games)
-    # returning empty list currently check the classmethod 
     
     # May want to put something in there that lets the user know that they have no games. If they have not yet added any games. 
     
@@ -274,27 +268,9 @@ def display_users_games():
 # this may not need to be a post method/ standby 
 def display_search_games(): 
     """Search Games"""
-    print('display search games is running in app.py')
-    # work on this route tomorrow 
-    # will want to return by game name at least and maybe other things like artists etc.... 
-    # games=games
-    # raise ValueError('games:', games)
     
-    # string_data = session['data']
-    # string_data = session.get('data')
-    # raise ValueError(string_data)
-    # if session.get('data') == True:
-    #     return 'there is session data'
-    # else: 
-    #     print('nothing appears to be in session')
-    
-    # data = session.get('games')
     data = session['games']
     jsonify(data)
-    
-    print('data from dispaly search games:', data)
-    
-    
     
     return render_template('game_search.html')
 

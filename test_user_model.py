@@ -186,13 +186,14 @@ class UserModelTestCase(TestCase):
         app.before_request(set_g_user(user))
         self.assertEqual(g.user, user)
         
-    # def test_do_login(self):
-    #     user = self.u1
-    #     do_login(user)
-    #     app.before_request()
-    
-    #     self.assertEqual(g.user, user)
-    
+        
+    # def test_edit_user(self):
+    #     with app.test_client() as client:
+    #         resp = client.get(f'/users/{self.uid1}/edit')
+    #         html = resp.get_data(as_text=True)
+             
+    #         self.assertEqual(resp.status_code, 200)
+    #         self.assertIn("Edit Your Profile.", html)
     
         
     
