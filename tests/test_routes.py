@@ -2,7 +2,7 @@
 
 # run these tests like:
 #
-#    python -m unittest test_routes.py
+#    python -m unittest tests/test_routes.py
 
 import os
 from unittest import TestCase

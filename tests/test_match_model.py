@@ -2,7 +2,7 @@
 
 # run these tests like:
 #
-#    python -m unittest test_match_model.py
+#    python -m unittest tests/test_match_model.py
 
 import os
 from unittest import TestCase

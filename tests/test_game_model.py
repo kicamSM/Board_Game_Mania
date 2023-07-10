@@ -2,7 +2,7 @@
 
 # run these tests like:
 #
-#    python -m unittest test_game_model.py
+#    python -m unittest tests/test_game_model.py
 
 
 import os

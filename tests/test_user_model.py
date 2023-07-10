@@ -2,7 +2,7 @@
 
 # run these tests like:
 #
-#    python -m unittest test_user_model.py
+#    python -m unittest tests/test_user_model.py
 
 import os
 from unittest import TestCase
@@ -196,53 +196,4 @@ class UserModelTestCase(TestCase):
     #         self.assertIn("Edit Your Profile.", html)
     
         
-    
-# *************************************************************************************************
-  
-    # def test_authorized_game_page_access(self):
-    #     """test the authorized game page accessibility"""
-    #         # self.setup_followers()
-
-    #       # will need to figure out how to check the g.user so we can checka and see if this is working 
-    #     u1 = User.query.get(self.u1.id)
-    #     new_game = Game.query.get(self.g1.id)
-    #     u1.games.append(new_game)
-    #     db.session.commit()
-    #     with self.client as c:
-
-    #         resp = c.get(f"/users/{self.g1.id}/add", follow_redirects=True)
-            
-    #     self.assertEqual(resp.status_code, 200)
-    #     # will have to double check this response code 
-    #     self.assertEqual(len(self.user_games), 1)
-    #     # this may not be correct either.... 
-        
-    #     # self.assertNotIn("@testuser2", str(resp.data))
-    
-
-    # def test_unauthorized_game_page_access(self):
-    #     """test the unauthorized game page accessibility"""
-
-    #     new_game = Game.query.get(self.g1.id)
-    #     # this one we want there to be a game but no logged in user so global user willbe empty and then you can take that and try and redirect to the add page and should give you an unauthorized message. 
-
-    #     with self.client as c:
-
-    #         resp = c.get(f"/users/{self.g1.id}/add", follow_redirects=True)    
-    #     self.assertIn("Access unauthorized", str(resp.data))    
-    #     self.assertEqual(resp.status_code, 200)  
-
-
-    # def test_user_games(self):
-    #     # need to add games to test the length of games 
-    #     # self.u1.following.append(self.u2)
-        
-    #     db.session.commit()
-
-    #     self.assertEqual(len(self.u2.following), 0)
-    #     self.assertEqual(len(self.u2.followers), 1)
-    #     self.assertEqual(len(self.u1.followers), 0)
-    #     self.assertEqual(len(self.u1.following), 1)
-
-    #     self.assertEqual(self.u2.followers[0].id, self.u1.id)
-    #     self.assertEqual(self.u1.following[0].id, self.u2.id)
+     
