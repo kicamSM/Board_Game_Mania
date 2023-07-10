@@ -1,7 +1,6 @@
 """Board Game Mania"""
 
 import warnings
-import collections
 from flask import Flask, render_template, request, jsonify, flash, session, redirect, g
 
 from models import db, connect_db, User, Game, Match, Player, match_player
@@ -321,7 +320,6 @@ def api_search_games():
 @app.route('/users/<game_id>/log_play', methods=['GET','POST'])
 def log_play_for_user(game_id): 
     """Logs a play for user """
-    print('/users/<game_id>/log_play is running in app.py')
     
     if not g.user:
         flash("Please make an account to use this feature.", "danger")
@@ -627,23 +625,8 @@ def convert_to_dict(data):
             'email': email, 
             'score': score,
             'win': win
-    # for item in row:
-    #   result[0].append({
-    #       'email': item[0],
-    #       'match_id': item[1],
-    #       'player_id': item[2],
-    #       'win': item[3],
-    #       'score': item[4]
-      }
+        }
   return result
-
-# def get_year_month_day(timestamp):
-#   """Gets the year, month, and day from a timestamp."""
-# #   date = datetime.datetime.fromtimestamp(timestamp)
-#   year = timestamp.year
-# #   raise ValueError(year)
-
-#   return date.year, date.month, date.day
 
 def convert_list_to_date(date_list):
   """Converts a list of integers representing the year, month, and day into a string representing the date in the format mm/dd/yyyy."""

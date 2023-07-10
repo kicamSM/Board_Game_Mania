@@ -17,13 +17,14 @@ os.environ['SECRET_KEY'] = "SECRET_KEY"
 
 from app import app 
 
+db.drop_all()
 db.create_all()
 
 class GameModelTestCase(TestCase):
-    """Test views for messages."""
+    """Test Add Games to Games Table"""
     
     def setUp(self):
-        """Create test client, removes amy added data."""
+        """Create test client, removes any added data."""
         
         Game.query.delete()
     
