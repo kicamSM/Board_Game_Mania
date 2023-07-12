@@ -18,10 +18,10 @@
 <br />
 <p align="center">
   <a href="https://github.com/kajuberdut/augustine">
-    <img src="https://raw.githubusercontent.com/kicamSM/Board_Game_Mania/master/static/Meeple_Image.png" alt="icon" width="160" height="160">
+    <img src="https://raw.githubusercontent.com/kicamSM/Board_Game_Mania/master/static/Meeple_Image.png" alt="meeple icon" width="160" height="160">
   </a>
 
-  <h3 align="center">Board Game Mania</h3>
+  <h2 align="center" style="text-decoration: underline;">Board Game Mania</h2>
 
   <p align="center">
     Simple board game application with the ability to score a match and keep track of the results.
