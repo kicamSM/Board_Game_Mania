@@ -2,14 +2,9 @@ body {
     background-color: lightgray;
 }
 
-/* #home-container {
+#home-container {
     background-image; 
 
-} */
-
-#home-card {
-  justify-content: center;
-  
 }
 
 
@@ -17,7 +12,6 @@ body {
     height: 40px;
     width: 40px;
     mix-blend-mode: multiply;
-    /* background: transparent; */
   }
 
   #search-btn {
@@ -27,11 +21,6 @@ body {
     background-color: rgba(255, 255, 255, 0);
     margin-top: 1px;
   }
-
-  /* #search-btn:hover {
-    background-color: rgb(81, 133, 3);
-    color: black;
-  } */
 
   .heading {
     color: #d9d6d6;
@@ -120,58 +109,7 @@ body {
     box-shadow: none;
     border: 3px solid darkred;
   }
-  
-  /* on "onboarding" pages (signup & login), the navbar is
-     different: no search box, the logo is centered, and it has
-     a background color.
-   */
-  
-  /* .onboarding > .navbar {
-    background-image: url("/static/images/nav-bg.png");
-    background-size: 100% 100%;
-  }
-  
-  .onboarding .navbar-header {
-    margin: 0 auto;
-  }
-  
-  .onboarding .navbar-brand {
-    margin: 0;
-  }
-  
-  .onboarding .navbar-brand span {
-    display: none;
-  }
-  
-  .onboarding .nav.navbar-nav.navbar-right {
-    position: absolute;
-    right: 16px;
-  }
-  
-  .onboarding > .navbar a {
-    color: #fff;
-  }
-  
-  .onboarding > .navbar form.navbar-form {
-    display: none;
-  }
-  
-  .onboarding {
-    background-color: #fff;
-  }
-  
-  @media (max-width: 468px) {
-    nav form.navbar-form {
-      display: none;
-    }
-  }
-  
-  nav + .container {
-    margin-bottom: 1rem;
-  }
-   */
 
-  /* ************************************************************** */
   /* user details css */
 
   * {
@@ -203,22 +141,6 @@ body {
   margin-top: 110px;
 }
 
-/* .card {
-  border: 3px solid;
-  border-color:#6e6b6b;
-} */
-
-/* .image img {
-    transition: all 0.5s
-} */
-
-/* .card:hover .image img {
-    transform: scale(1.5)
-} */
-
-/* .form-card {
-  background-color: #6e6b6b;
-} */
 
 .btn {
     height: 40px;
@@ -232,25 +154,6 @@ body {
     font-weight: bold
 }
 
-/* .idd {
-    font-size: 14px;
-    font-weight: 600
-}
-
-.idd1 {
-    font-size: 12px
-} */
-
-/* .number {
-    font-size: 22px;
-    font-weight: bold
-} */
-
-/* .follow {
-    font-size: 12px;
-    font-weight: 500;
-    color: #444444
-} */
 
 .btn1 {
     height: 40px;
@@ -261,25 +164,6 @@ body {
     font-size: 20px
 }
 
-/* .text span {
-    font-size: 13px;
-    color: #545454;
-    font-weight: 500
-} */
-
-/* .icons i {
-    font-size: 19px
-}
-
-hr .new1 {
-    border: 1px solid
-} */
-
-/* .join {
-    font-size: 14px;
-    color: #a0a0a0;
-    font-weight: bold
-} */
 
 .game-images {
   height: 300px;
@@ -339,10 +223,6 @@ input[type="range"] {
   width: 100px;
   height: 50px;
   font-size: 20px;
-  /* text-align: center;
-  font-size: 14px;
-  text-transform: capitalize;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
 
 }
 
@@ -361,22 +241,14 @@ td {
 }
 
 .search-card-space {
-  /* padding: 50px; */
+
   margin: 10px;
-  /* background-color: red; */
 }
 
 #search-icon {
   background-color: rgba(255, 255, 255, 0);
 }
 
-/* .name-fields {
-  border: black solid 2px;
-} */
-
-/* .th {
-  color: red;
-} */
 
 #score-board {
   background-color: #dddddd;
@@ -423,15 +295,3 @@ td {
 .table tbody tr:last-of-type {
   border-bottom: 2px solid darkred;
 }
-
-/* .data {
-  min-width: 200px;
-  min-height: 200px;
-  background-color: orange;
-} */
-
-.table tbody tr.active-row {
-  font-weight: bold;
-  color: #009879;
-}
-/* this is currently not running */
