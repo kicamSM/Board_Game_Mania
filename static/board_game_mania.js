@@ -4,9 +4,10 @@ const API_BASE_URL = window.location.href
 
 
 
+
 // alert('loaded')
 
-// console.log(API_BASE_URL)
+console.log(API_BASE_URL)
 
 function generateGameHTML(game) {
     return `
