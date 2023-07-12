@@ -618,9 +618,6 @@ def display_matches(game_id):
     match_ids = []
     timestamps = []
     
-   
-    
-
     for match in matches:
         date_list = []
         match_id = match.id
@@ -635,19 +632,10 @@ def display_matches(game_id):
         date_list.append(day)
         
         date = convert_list_to_date(date_list)
-        
-        # raise ValueError('date', date)
-        # raise ValueError(year)
-        # raise ValueError('type ts', type(timestamp))
-        # date = get_year_month_day(timestamp)
-        # raise ValueError(date)
-        # raise ValueError(type(timestamp))
+
         match_ids.append(match_id)
-        # timestamps.append(str(timestamp))
         timestamps.append(date)
     
-    # raise ValueError(match_ids)
-    # raise ValueError(type(timestamps))
     all_matches_data = []
 
     sql_session = SQLSessionMaker()
@@ -763,7 +751,7 @@ def api_game(game_id):
 
 # if __name__ == '__main__':
 #     app.run(debug=True)
-# from the youtube video 
+# from the youtube video 02
 
 
 

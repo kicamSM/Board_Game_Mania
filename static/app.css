@@ -40,11 +40,12 @@ body {
   /* ======================= Nav */
 
   .navbar {
-    background-color: #6e6b6b;
+    /* background-color: #6e6b6b; */
+    background-color: #8f8c8c;
     height: 46px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
     margin-bottom: 1rem;
-    position: relative;
+    position: relative; 
     z-index: 9999;
   }
   

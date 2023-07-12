@@ -7,10 +7,8 @@
 
 import os
 from unittest import TestCase
-from sqlalchemy import exc
-from sqlalchemy.exc import IntegrityError
 
-from models import db, User, Game
+from models import db, Game
 
 os.environ['DATABASE_URL'] = "postgresql:///board_game-test"
 os.environ['SECRET_KEY'] = "SECRET_KEY"

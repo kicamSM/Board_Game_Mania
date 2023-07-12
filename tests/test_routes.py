@@ -3,10 +3,11 @@
 # run these tests like:
 #
 #    python -m unittest tests/test_routes.py
+#  run all test files python -m unittest discover -s tests
 
 import os
 from unittest import TestCase
-from sqlalchemy import exc
+# from sqlalchemy import exc
 from sqlalchemy.exc import IntegrityError
 from flask import url_for
 import werkzeug
@@ -35,14 +36,9 @@ db.create_all()
 class AppTestCase(TestCase):
     """Test Routes"""
     
-    # def test_display_home(self):
-    #     with app.test_client() as client:
-    #         # response = requests.get("/")
-    #         response = client.get(f'http://{app.config["SERVER_NAME"]}{app.url_for("display_home")}', )
-    #     assert response.status_code == 200
-    #     assert 'background_image' in response.json()
     def setUp(self):
         
+        db.create_all()
         
         u1 = User.register(first_name="test_first1", last_name="test_last1", email="email1@email.com", password="testing1", username="test_username1")
         uid1 = 1111
@@ -70,6 +66,7 @@ class AppTestCase(TestCase):
         self.uid2 = uid2
         
         self.g1 = g1
+        self.gid1 = gid1
 
         self.client = app.test_client()
         
@@ -352,26 +349,24 @@ class AppTestCase(TestCase):
             
         self.assertEqual(resp.status_code, 200)
         
-    def delete_users_game(self):
+    def test_delete_users_game(self):
         """"Test delete_users_game Route"""
         with self.client as client:
             with client.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.u1.id
                 
-        game = Game.query.get(self.g1)
-        db.session.add(game)
+        game = self.g1
         user = User.query.get(self.uid1)
-        
         user.games.append(game)
-        
+
         self.assertEqual(len(user.games), 1)
         
         db.session.commit()
             
-        resp = client.get(f'/games/{self.uid1}/delete')
+        resp = client.get(f'/games/{self.gid1}/delete')
         
-        self.assertEqual(user.games, 0)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(len(user.games), 0)
+        self.assertEqual(resp.status_code, 302)
         
     def test_api_game(self):
         """Test api_game Route"""
