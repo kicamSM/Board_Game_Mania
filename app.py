@@ -24,9 +24,12 @@ API_BASE_URL = 'https://api.boardgameatlas.com/api/'
 # response = requests.get('https://api.boardgameatlas.com/api/game/prices?game_id=6FmFeux5xH&client_id=yApNU591Nc')
 
 
-client_id = os.getenv('client_id')
+
+# client_id = os.getenv('client_id')
 # note you have to use an f string to add this into the response
 # response = requests.get(f'https://api.boardgameatlas.com/api/lists?username=trentellingsen&client_id={client_id}')
+
+client_id = os.environ.get('CLIENT_ID')
 
 CURR_USER_KEY = "curr_user"
 
@@ -42,6 +45,8 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+
+
 
 Session(app)
 
