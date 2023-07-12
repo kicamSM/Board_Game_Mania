@@ -1,6 +1,6 @@
 // const API_BASE_URL = 'http://127.0.0.1:5000/'
-// const API_BASE_URL = 'https://board-game-mania.onrender.com'
-const API_BASE_URL = window.location.href
+const API_BASE_URL = 'https://board-game-mania.onrender.com'
+// const API_BASE_URL = window.location.href
 
 
 
@@ -26,20 +26,8 @@ function generateGameHTML(game) {
   }
 
 async function displayGames() {
-    console.log('displayGames is running in board_game_mania.py')
-    // const response = await axios.get(`${BASE_URL}/games`);
-    // console.log(API_BASE_URL)
     const response = await axios.get(`${API_BASE_URL}api/games`);
     // this we are pulling from the route in the API for games 
-    console.log('response:', response)
-    console.log(response.status);
-    console.log('response.data:', response.data)
-    console.log('response.data.games:', response.data.games)
-    // const object = JSON.parse(response)
-    // console.log('object:', object)
-    // console.log(response)
-
-    // console.log(response.data)
 
     for (let gameData of response.data.games) {
       console.log('gameData:', gameData)
