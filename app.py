@@ -2,7 +2,6 @@
 
 import warnings
 from flask import Flask, render_template, request, jsonify, flash, session, redirect, g
-from flask_wtf.csrf import CSRFProtect
 
 from models import db, connect_db, User, Game, Match, Player, match_player
 from flask_session import Session
@@ -32,7 +31,8 @@ client_id = os.getenv('client_id')
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///board_game_db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///board_game_db'
+
 
 app.config['SQLALCHEMY_ECHO'] = True
 
@@ -41,8 +41,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-
-CSRFProtect(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
 Session(app)
 
