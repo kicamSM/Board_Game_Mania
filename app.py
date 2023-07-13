@@ -26,14 +26,18 @@ API_BASE_URL = 'https://api.boardgameatlas.com/api/'
 
 
 # client_id = os.getenv('client_id')
+# this needs to be set for flask run
 # note you have to use an f string to add this into the response
 # response = requests.get(f'https://api.boardgameatlas.com/api/lists?username=trentellingsen&client_id={client_id}')
 
 client_id = os.environ.get('CLIENT_ID')
+# this needs to be set for deployment
 
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
+
+# for running flask locally this needs to be set
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///board_game_db'
 
 
@@ -44,7 +48,9 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+# this needs to be set for deployment 
 
 
 
@@ -568,7 +574,12 @@ def add_game_to_user(game_id):
     user = User.query.get_or_404(g.user.id)
     
     try: 
+        if Game.query.get(game_id):
+            raise IntegrityError
+        # added this in to try and see if this fixes the break in deployment
         user.games.append(new_game)
+        
+        # this is where I think its breaking
 
     except IntegrityError:
         db.session.rollback()
