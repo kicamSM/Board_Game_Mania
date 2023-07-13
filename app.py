@@ -16,11 +16,13 @@ from sqlalchemy import create_engine
 import os
 
 # engine = create_engine("postgresql:///board_game_db")
-engine = os.environ.get('DATABASE_URL') 
+# engine = os.environ.get('DATABASE_URL') 
+conn_string = os.environ.get('DATABASE_URL')
 
 
 from sqlalchemy.orm import sessionmaker
-engine = sa.create_engine(engine, echo=False)
+# engine = sa.create_engine(engine, echo=False)
+engine = sa.create_engine(conn_string, echo=False)
 SQLSessionMaker = sessionmaker(bind = engine)
 
 API_BASE_URL = 'https://api.boardgameatlas.com/api/'
