@@ -14,7 +14,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import create_engine
 import os
 
-engine = create_engine("postgresql:///board_game_db")
+# engine = create_engine("postgresql:///board_game_db")
+engine = os.environ.get('DATABASE_URL') 
 
 
 from sqlalchemy.orm import sessionmaker
@@ -64,11 +65,6 @@ try:
 except ImportError:
     warnings.warn('Debugging disabled. Install flask_debugtoolbar to enable')
     pass
-
-# db.init_app(app)
-# this was not letting the flask app run 
-# adds the app on the database after the fact
-# entered this from the youtube file 
 
 connect_db(app)
 
