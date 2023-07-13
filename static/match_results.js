@@ -1,6 +1,6 @@
 // const API_BASE_URL = 'http://127.0.0.1:5000/'
 // const API_BASE_URL = window.location.href
-const API_BASE_URL = 'https://board-game-mania.onrender.com'
+const API_BASE_URL = 'https://board-game-mania.onrender.com/'
 
 
 function generateGameHTML(game, idCount, wins, loss) {
