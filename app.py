@@ -11,6 +11,7 @@ import json
 from forms import RegistrationForm, LoginForm, UserEditForm 
 from sqlalchemy.exc import IntegrityError
 
+import sqlalchemy as sa
 from sqlalchemy import create_engine
 import os
 
@@ -19,6 +20,7 @@ engine = os.environ.get('DATABASE_URL')
 
 
 from sqlalchemy.orm import sessionmaker
+engine = sa.create_engine(engine, echo=False)
 SQLSessionMaker = sessionmaker(bind = engine)
 
 API_BASE_URL = 'https://api.boardgameatlas.com/api/'
