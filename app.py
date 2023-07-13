@@ -575,7 +575,7 @@ def add_game_to_user(game_id):
     
     try: 
         if Game.query.get(game_id):
-            raise IntegrityError
+            raise IntegrityError()
         # added this in to try and see if this fixes the break in deployment
         user.games.append(new_game)
         
