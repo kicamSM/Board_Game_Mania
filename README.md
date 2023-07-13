@@ -34,14 +34,11 @@
 <details open="open">
   <summary><h2 style="display: inline-block">Table of Contents</h2></summary>
   <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-    </li>
-    </li>
+    <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
     <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#project-in-action">Project In Action</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
@@ -61,7 +58,6 @@
 
 
 ## Features 
-***
 * Easy to use
 * Add games to users games 
 * Log plays of games in users games which tracks score
@@ -72,7 +68,7 @@
 
 <!-- GETTING STARTED -->
 ## Getting Started
-***
+
 
 To get a local copy up and running follow these simple steps.
 
@@ -87,7 +83,7 @@ For information about cloning and dev setup see: [Contributing](#Contributing)
 
 <!-- CONTRIBUTING -->
 ## Contributing
-***
+
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -111,10 +107,13 @@ Contributions are what make the open source community such an amazing place to b
     python -m coverage run -m unittest discover -s tests
     ```
 
+## Project In Action 
+
+[https://board-game-mania.onrender.com](https://board-game-mania.onrender.com)
 
 <!-- CONTACT -->
 ## Contact
-***
+
 
 Sophia Macik - kicamSMM@gmail.com
 
