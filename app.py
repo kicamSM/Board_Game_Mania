@@ -557,7 +557,8 @@ def display_matches(game_id):
     
     return render_template('game_results_details.html', _game_id=game_id, match_id_list=match_id_list, match_data_list_json=match_data_list_json, timestamps_json=timestamps_json)
 
-    
+class FuaxIntegrityError(Exception):
+    pass
 
 @app.route('/games/<game_id>/add', methods=['GET', 'POST'])
 def add_game_to_user(game_id): 
@@ -575,13 +576,14 @@ def add_game_to_user(game_id):
     
     try: 
         if Game.query.get(game_id):
-            raise IntegrityError()
+            raise FuaxIntegrityError()
+            # raise IntegrityError()
         # added this in to try and see if this fixes the break in deployment
         user.games.append(new_game)
         
         # this is where I think its breaking
-
-    except IntegrityError:
+    except (IntegrityError, FuaxIntegrityError):
+    # except IntegrityError:
         db.session.rollback()
         game = Game.query.get_or_404(game_id)
         user.games.append(game)
