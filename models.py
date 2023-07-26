@@ -137,3 +137,5 @@ match_player = db.Table('match_player', db.Model.metadata,
     
 )
 
+# class FuaxIntegrityError:
+#     pass
