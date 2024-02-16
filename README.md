@@ -17,7 +17,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/kajuberdut/augustine">
+  <a href="https://github.com/kicamSM/Board_Game_Mania">
     <img src="https://raw.githubusercontent.com/kicamSM/Board_Game_Mania/master/static/Meeple_Image.png" alt="meeple icon" width="160" height="160">
   </a>
 
